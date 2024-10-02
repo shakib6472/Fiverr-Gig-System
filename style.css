@@ -1,0 +1,240 @@
+
+/* Overriding the bootstrap Colors */
+:root {
+    /* Primary colors */
+    --bs-primary: #4780A6;
+    --bs-secondary: #6c757d;
+    --bs-success: #28a745;
+    --bs-info: #17a2b8;
+    --bs-warning: #ffc107;
+    --bs-danger: #dc3545;
+    --bs-light: #f8f9fa;
+    --bs-dark: #343a40;
+
+    /* Gray colors */
+    --bs-gray-100: #f8f9fa;
+    --bs-gray-200: #e9ecef;
+    --bs-gray-300: #dee2e6;
+    --bs-gray-400: #ced4da;
+    --bs-gray-500: #adb5bd;
+    --bs-gray-600: #6c757d;
+    --bs-gray-700: #495057;
+    --bs-gray-800: #343a40;
+    --bs-gray-900: #212529;
+
+    /* Body */
+    --bs-body-bg: #fff;
+    --bs-body-color: #212529;
+
+    /* Links */
+    --bs-link-color: #4780A6;
+    --bs-link-hover-color: #356587;
+
+    /* Borders */
+    --bs-border-color: #dee2e6;
+    --bs-border-width: 1px;
+
+
+
+    
+    /* Backgrounds */
+    --bs-bg-primary: #4780A6;
+    --bs-bg-secondary: #6c757d;
+    --bs-bg-success: #28a745;
+    --bs-bg-info: #17a2b8;
+    --bs-bg-warning: #ffc107;
+    --bs-bg-danger: #dc3545;
+    --bs-bg-light: #f8f9fa;
+    --bs-bg-dark: #343a40;
+
+    /* Font and Typography */
+    --bs--fm-font-sans-serif: "Helvetica Neue", Arial, sans-serif;
+    --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Spacing */
+    --bs-spacing-base: 1rem;
+    --bs-spacing-xs: 0.25rem;
+    --bs-spacing-sm: 0.5rem;
+    --bs-spacing-md: 1rem;
+    --bs-spacing-lg: 1.5rem;
+    --bs-spacing-xl: 3rem;
+
+    /* Shadows */
+    --bs-box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --bs-box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    --bs-box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    
+    /* Form controls */
+    --bs-input-bg: #fff;
+    --bs-input-border-color: #ced4da;
+    --bs-input-border-radius: 0.25rem;
+    --bs-input-padding-y: 0.375rem;
+    --bs-input-padding-x: 0.75rem;
+
+    /* Other */
+    --bs-border-radius: 0.25rem;
+    --bs-modal-bg: #fff;
+}
+
+:root .btn-primary {
+        /* Buttons */
+        --bs-btn-primary-bg: #4780A6;
+        --bs-btn-primary-border: #4780A6;
+        --bs-btn-secondary-bg: #6c757d;
+        --bs-btn-secondary-border: #6c757d;
+        --bs-btn-color: #fff;
+        --bs-btn-bg: #4780A6 !important;
+        --bs-btn-border-color: #4780A6;
+        --bs-btn-hover-color: #000000;
+        --bs-btn-hover-bg: #F6D90A;
+        --bs-btn-hover-border-color: #F6D90A;
+        --bs-btn-focus-shadow-rgb: 49, 132, 253;
+        --bs-btn-active-color: #fff;
+        --bs-btn-active-bg: #F6D90A;
+        --bs-btn-active-border-color: #F6D90A;
+        --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+        --bs-btn-disabled-color: #fff;
+        --bs-btn-disabled-bg: #efefef;
+        --bs-btn-disabled-border-color: #efefef;
+}
+
+.container .row  {
+padding: 0;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 0;
+padding-right: 0;
+margin: 0;
+margin-top: 0;
+margin-bottom: 0;
+margin-left: 0;
+margin-right: 0;
+}
+
+.container  label{
+font-family: var(--bs--fm-font-sans-serif);
+font-size: 14px;
+}
+.container .row  label{
+font-family: var(--bs--fm-font-sans-serif);
+font-size: 14px;
+}
+
+.container .row  input{
+font-family: var(--bs--fm-font-sans-serif);
+font-size: 12px;
+padding: 6px;
+border-radius: 6px;
+}
+.container .row img#profile_preview {
+    max-width: 100px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50px;
+}
+    .container .row img#cover_preview {
+    max-width: 200px;
+    width: 200px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+    .container .button-style {
+    background-color: var(--bs-btn-bg);
+    border: 2px solid #efefef;
+    padding: 10px 0;
+    font-family: var(--bs--fm-font-sans-serif);
+    font-size: 15px;
+}
+    /* .container .button-style:hover {
+    background-color: var(--bs-btn-hover-bg);
+    border: 2px solid #efefef;
+} */
+
+.container .row select#expertise {
+    height: 31px;
+}
+
+/* Loading CSS */
+
+
+
+.lds-ellipsis,
+.lds-ellipsis div {
+  box-sizing: border-box;
+}
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  color: #fff;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33.33333px;
+  width: 13.33333px;
+  height: 13.33333px;
+  border-radius: 50%;
+  background: currentColor;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
+
+
+
+
+body .pre-loader {
+    z-index: 5454;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000000c0;
+    display: none;
+}
