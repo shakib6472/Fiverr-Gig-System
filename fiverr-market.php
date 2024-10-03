@@ -14,7 +14,6 @@
 	* Domain Path: /languages
 	*/
 
-
 	if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 	}
@@ -31,25 +30,47 @@
 	wp_enqueue_script('fiverr-market-jquery-script',  'https://code.jquery.com/jquery-3.7.1.min.js' , array(), '1.0.0', true);
 	wp_enqueue_script('fiverr-market-script', plugin_dir_url(__FILE__) . 'scripts.js' , array('fiverr-market-jquery-script'), '1.0.0', true);
 	wp_enqueue_script('fiverr-market-font-owesomw-script', 'https://kit.fontawesome.com/46882cce5e.js' , array(), null, true);
+	wp_enqueue_script('fiverr-market-toast-script',plugin_dir_url(__FILE__) . 'jquery.toast.js', array('jquery'), null, true);
 
 	// Localize the script with new data
 	wp_localize_script('fiverr-market-script', 'ajax_object' , array( 'ajax_url'=> admin_url('admin-ajax.php'),
 	// Add other variables you want to pass to your script here
 	));
 	}
-
 	add_action('wp_enqueue_scripts', 'fiverr_market_enque_scripts');
 
-
 	// Elementor Widget Setip
-
 	function fiverr_market_elemetore_widgets($widgets_manager)
 {
 
 	require_once(__DIR__ . '/elementor/regi.php');
+	require_once(__DIR__ . '/elementor/teachers.php');
 
+	$widgets_manager->register(new \Elementor_fiverr_market_teacher_loop());
 	$widgets_manager->register(new \Elementor_fiverr_market_teacher_registration_form());
 }
 add_action('elementor/widgets/register', 'fiverr_market_elemetore_widgets');
+
+
+
+
+// Activation Hook
+register_activation_hook(__FILE__, 'chat_by_shakib_activation_function');
+
+// Deactivation Hook
+register_deactivation_hook(__FILE__, 'chat_by_shakib_deactivation_function');
+
+// Activation function
+function chat_by_shakib_activation_function() {
+    // Your activation code here
+    // For example, create database tables or set default options
+	create_teacher_student_message_cpt();
+}
+
+// Deactivation function
+function chat_by_shakib_deactivation_function() {
+    // Your deactivation code here
+    // For example, delete database tables or clean up options
+}
 
 

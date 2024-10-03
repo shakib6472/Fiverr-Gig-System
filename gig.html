@@ -1,146 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fiverr Gig Style Design</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' integrity='sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN' crossorigin='anonymous'>
-    <script src='https://kit.fontawesome.com/46882cce5e.js' crossorigin='anonymous'></script>
-    <style>
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-
-
-.gig-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    width: 320px;
-    text-align: center;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-
-.gig-card:hover {
-    transform: translateY(-10px);
-}
-
-.gig-image  {
-    position: relative;
-    margin-bottom: 40px;
-}
-.gig-image img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-}
-.gig-image img.profile {
-    height: 160px;
-    width: 160px;
-    border-radius: 500px;
-    border: 8px solid #f7f7f7;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translate(-50%, -75%);
-}
-
-.gig-info {
-    padding: 20px;
-}
-.gig-card .gig-info .subjects{
-display: flex;
-gap: 10px;
-justify-content: center;
-align-items: center;
-margin-bottom: 10px;
-}
-.gig-card .gig-info .subjects span{
-    background-color: #27ae5fc3;
-    color: #ffffff;
-    padding: 4px 9px;
-    border-radius: 5px;
-}
-
-.gig-title {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.gig-description {
-    font-size: 0.95rem;
-    color: #666;
-    margin-bottom: 15px;
-    line-height: 1.4;
-}
-
-.gig-rating {
-    font-size: 1rem;
-    color: #f39c12;
-    margin-bottom: 10px;
-}
-
-.gig-card .gig-image .gig-price {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    font-size: 1.2rem;
-    color: #27ae60;
-    margin-bottom: 20px;
-    padding: 4px 15px;
-    background-color: #efefef;
-    border-radius: 4px;
-}
-
-.gig-btn {
-    background-color: #27ae60;
-    color: white;
-    padding: 10px 15px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.gig-btn:hover {
-    background-color: #2ecc71;
-}
-
-
-    </style>
-</head>
-<body>
-
-    <div class="gig-card">
-        <div class="gig-image">
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://kit.fontawesome.com/46882cce5e.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="gigs">
+        <div class="gig-card">
+          <div class="gig-image">
             <div class="gig-price">
-                <span> <strong>$50</strong>/hr</span>
+              <span> <strong>$50</strong>/hr</span>
             </div>
-            <img src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg" alt="Gig Image">
-            <img src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg" alt="Gig Image" class="profile">
-
-        </div>
-        <div class="gig-info">
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
             <h2 class="gig-title">Shakib Shown</h2>
-           <div class="subjects">
-            <span>AP</span>
-            <span>ACT</span>
-            <span>SAT</span>
-           </div>
-            <div class="gig-rating">
-                <span>⭐⭐⭐⭐⭐</span> (95 Reviews)
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
             </div>
-           
-            <button class="gig-btn">Get Started <i class="fas fa-right-long ms-2"></i></button>
-        </div>
-    </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
 
-</body>
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+        <div class="gig-card">
+          <div class="gig-image">
+            <div class="gig-price">
+              <span> <strong>$50</strong>/hr</span>
+            </div>
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
+            <h2 class="gig-title">Shakib Shown</h2>
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
+            </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
+
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+        <div class="gig-card">
+          <div class="gig-image">
+            <div class="gig-price">
+              <span> <strong>$50</strong>/hr</span>
+            </div>
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
+            <h2 class="gig-title">Shakib Shown</h2>
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
+            </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
+
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+        <div class="gig-card">
+          <div class="gig-image">
+            <div class="gig-price">
+              <span> <strong>$50</strong>/hr</span>
+            </div>
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
+            <h2 class="gig-title">Shakib Shown</h2>
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
+            </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
+
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+        <div class="gig-card">
+          <div class="gig-image">
+            <div class="gig-price">
+              <span> <strong>$50</strong>/hr</span>
+            </div>
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
+            <h2 class="gig-title">Shakib Shown</h2>
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
+            </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
+
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+        <div class="gig-card">
+          <div class="gig-image">
+            <div class="gig-price">
+              <span> <strong>$50</strong>/hr</span>
+            </div>
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
+            <h2 class="gig-title">Shakib Shown</h2>
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
+            </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
+
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+        <div class="gig-card">
+          <div class="gig-image">
+            <div class="gig-price">
+              <span> <strong>$50</strong>/hr</span>
+            </div>
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/19092018-08-26-24.jpg_compressed.jpeg"
+              alt="Gig Image"
+            />
+            <img
+              src="http://localhost/iyg/wp-content/uploads/2024/10/IABSE-Gala-Dinner-122-1.jpg"
+              alt="Gig Image"
+              class="profile"
+            />
+          </div>
+          <div class="gig-info">
+            <h2 class="gig-title">Shakib Shown</h2>
+            <div class="subjects">
+              <span>AP</span>
+              <span>ACT</span>
+              <span>SAT</span>
+            </div>
+            <div class="gig-rating"><span>⭐⭐⭐⭐⭐</span> (95 Reviews)</div>
+
+            <button class="gig-btn">
+              <a href="">Get Started <i class="fas fa-right-long ms-2"></i></a>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="teacehr-reviews">
+        <div class="review-card">
+          <div class="review-card__header">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
+              alt="User Image"
+              class="review-card__user-image"
+            />
+            <div class="review-card__info">
+              <h3 class="review-card__user-name">John Doe</h3>
+              <p class="review-card__date">October 2, 2024</p>
+            </div>
+          </div>
+          <div class="review-card__content">
+            <p class="review-card__text">
+              This teacher was excellent! The material was well-structured, and
+              I learned a lot.
+            </p>
+          </div>
+          <div class="review-card__rating">
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-card__header">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
+              alt="User Image"
+              class="review-card__user-image"
+            />
+            <div class="review-card__info">
+              <h3 class="review-card__user-name">John Doe</h3>
+              <p class="review-card__date">October 2, 2024</p>
+            </div>
+          </div>
+          <div class="review-card__content">
+            <p class="review-card__text">
+              This teacher was excellent! The material was well-structured, and
+              I learned a lot.
+            </p>
+          </div>
+          <div class="review-card__rating">
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-card__header">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
+              alt="User Image"
+              class="review-card__user-image"
+            />
+            <div class="review-card__info">
+              <h3 class="review-card__user-name">John Doe</h3>
+              <p class="review-card__date">October 2, 2024</p>
+            </div>
+          </div>
+          <div class="review-card__content">
+            <p class="review-card__text">
+              This teacher was excellent! The material was well-structured, and
+              I learned a lot.
+            </p>
+          </div>
+          <div class="review-card__rating">
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-card__header">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
+              alt="User Image"
+              class="review-card__user-image"
+            />
+            <div class="review-card__info">
+              <h3 class="review-card__user-name">John Doe</h3>
+              <p class="review-card__date">October 2, 2024</p>
+            </div>
+          </div>
+          <div class="review-card__content">
+            <p class="review-card__text">
+              This teacher was excellent! The material was well-structured, and
+              I learned a lot.
+            </p>
+          </div>
+          <div class="review-card__rating">
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+          </div>
+        </div>
+        <div class="review-card">
+          <div class="review-card__header">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
+              alt="User Image"
+              class="review-card__user-image"
+            />
+            <div class="review-card__info">
+              <h3 class="review-card__user-name">John Doe</h3>
+              <p class="review-card__date">October 2, 2024</p>
+            </div>
+          </div>
+          <div class="review-card__content">
+            <p class="review-card__text">
+              This teacher was excellent! The material was well-structured, and
+              I learned a lot.
+            </p>
+          </div>
+          <div class="review-card__rating">
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+            <span class="review-card__star">⭐</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

@@ -1,6 +1,5 @@
 <?php 
 
-
 function add_new_teacher() {
     // Check nonce for security (if you've set one)
     // check_ajax_referer('your_nonce_action', 'nonce');
@@ -71,9 +70,7 @@ function add_new_teacher() {
 add_action('wp_ajax_add_new_teacher', 'add_new_teacher');
 add_action('wp_ajax_nopriv_add_new_teacher', 'add_new_teacher'); // For non-logged-in users (optional)
 
-
-
-
+// Helping function of add new teacher
 function upload_image($file) {
     require_once(ABSPATH . 'wp-admin/includes/file.php');
     require_once(ABSPATH . 'wp-admin/includes/media.php');
@@ -107,3 +104,98 @@ function upload_image($file) {
     // If there was an error, return the error message
     return new WP_Error('upload_failed', $upload['error']);
 }
+
+
+ /*========================================================
+* Reply to a message
+==========================================================*/
+function send_reply_message()
+{
+    $sender_id = get_current_user_id();
+    $receiver_id = isset($_POST['receiver_id']) ? intval($_POST['receiver_id']) : 0;
+    $message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
+
+    if ($receiver_id <= 0 || empty($message)) {
+        wp_send_json_error('Invalid data.');
+        return;
+    }
+
+    // Create a new message post
+    $message_id = wp_insert_post(array(
+        'post_type'   => 'message',
+        'post_title'  => 'Reply from ' . get_userdata($sender_id)->display_name,
+        'post_content' => $message,
+        'post_status' => 'publish',
+        'meta_input'  => array(
+            'sender_id'  => $sender_id,
+            'receiver_id' => $receiver_id,
+            'is_read'    => 0, // Default to unread
+            'is_notified'    => 0, // Default to unread
+        ),
+    ));
+
+    if ($message_id) {
+        wp_send_json_success('Message sent successfully.');
+    } else {
+        wp_send_json_error('Failed to send message.');
+    }
+}
+add_action('wp_ajax_send_reply_message', 'send_reply_message');
+add_action('wp_ajax_nopriv_send_reply_message', 'send_reply_message');
+
+
+
+function get_unread_message_notification()
+{
+    $myid = get_current_user_id();
+    $args = array(
+        'post_type' => 'message',
+        'meta_query' => array(
+            array(
+                'key' => 'receiver_id',
+                'value' => $myid,
+                'compare' => '='
+            )
+        ),
+        'posts_per_page' => -1 // Get all messages
+    );
+
+    $messages = new WP_Query($args);
+    $total = 0;
+    $id = 0;
+    if ($messages->have_posts()) {
+        while ($messages->have_posts()) {
+            $messages->the_post();
+            $sender_id = get_post_meta(get_the_ID(), 'sender_id', true);
+            $is_notfied = get_post_meta(get_the_ID(), 'is_notified', true);
+
+            if (! $is_notfied) {
+                $total++;
+                update_post_meta(get_the_ID(), 'is_notified', true);
+                $id = $sender_id;
+            }
+        }
+        wp_reset_postdata();
+    }
+
+    if ($total > 0) {
+        if ($total < 2) {
+            $user_info = get_userdata($id); // Get the user data
+            $display_name = $user_info->display_name; // Get the display name
+
+            wp_send_json([
+                'success' => true,
+                'm' => 'You have a new message from <strong><a href="' . home_url('/chat') . '">' . $display_name . '</a></strong>'
+            ]);
+        } else {
+            wp_send_json([
+                'success' => true,
+                'm' => 'You have ' . $total . 'New Messages <a href="' . home_url('/chat') . '"> Chat </a>'
+            ]);
+        }
+    } else {
+        wp_send_json_error('No Unread Message');
+    }
+}
+add_action('wp_ajax_get_unread_message_notification', 'get_unread_message_notification');
+add_action('wp_ajax_nopriv_get_unread_message_notification', 'get_unread_message_notification');

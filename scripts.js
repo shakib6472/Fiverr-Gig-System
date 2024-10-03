@@ -1,6 +1,9 @@
 
 $(document).ready(function () {
   console.log('initiate 1.1');
+
+  
+  console.log('initiate 1.10');
   // Custom validation with jQuery
   $("#registration_form").on("submit", function (event) {
     var form = $(this)[0];
@@ -71,7 +74,7 @@ $(document).ready(function () {
     readURL(this, "#cover_preview");
   });
 
-  // Function to display the preview
+  // Function to display the preview - Helping
   function readURL(input, previewElement) {
     if (input.files && input.files[0]) {
       var reader = new FileReader();
@@ -82,4 +85,87 @@ $(document).ready(function () {
       reader.readAsDataURL(input.files[0]);
     }
   }
+  //Message
+  $(".reply_message").click(function (e) {
+    e.preventDefault(); // Prevent the default form submission
+    $(".pre-loading").css("display", "flex");
+    // Collect form data
+    var replyMessage = $("#reply-message").val();
+    var receiverId = $(this).data("receiver-id"); // Pass receiver ID from the form data
+    if (replyMessage) {
+      // Perform AJAX request
+      $.ajax({
+        type: "POST",
+        url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
+        data: {
+          action: "send_reply_message", // Action hook to handle the AJAX request
+          receiver_id: receiverId,
+          message: replyMessage,
+        },
+        success: function (response) {
+          if (response.success) {
+            location.reload(); // Reload the page to show the new message
+          } else {
+            alert("Failed to send reply.");
+            $(".pre-loading").css("display", "none");
+          }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.error("AJAX Error:", textStatus, errorThrown);
+        },
+      });
+    } else {
+      $(".pre-loading").css("display", "none");
+      alert("Please input message First");
+    }
+  });
+
+  //Get New message
+  setInterval(function () {
+    // Create an invisible audio element and append it to the body
+    // Get the audio element by its ID
+    const audio = $("#audiomsgesound")[0];
+
+    $.ajax({
+      type: "POST",
+      url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
+      data: {
+        action: "get_unread_message_notification", // Action hook to handle the AJAX request in your functions.php
+      },
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+        if (response.success) {
+          // Handle success response
+          // Reload the window
+          //need to play an audio here. Audio is in the same folder of this js file. audio file name is m.mp3
+          // Create an audio element and set its source
+
+          // Play the audio when desired
+          audio.play().catch(function (error) {
+            console.error("Playback failed:", error);
+          });
+
+          $.toast({
+            heading: "New Message",
+            text: response.m,
+            icon: "info",
+            showHideTransition: "slide",
+            position: "bottom-right",
+            loaderBg: "#3b8dbd",
+            hideAfter: 9000, // Hides after 9 seconds
+            stack: false,
+            bgColor: "#A0743B",
+            textColor: "white",
+          });
+        }
+      },
+      error: function (xhr, textStatus, errorThrown) {
+        // Handle error
+        console.error("Error:", errorThrown);
+      },
+    });
+  }, 3000);
+
+
 });

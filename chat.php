@@ -1,64 +1,9 @@
 <?php
 
-// Add the 'teacher' role with specific capabilities
-add_role('teacher', 'Teacher', array(
-    'read' => true, // Can read posts and pages
-    'edit_posts' => true, // Can edit their own posts
-    'delete_posts' => true, // Can delete their own posts
-    'publish_posts' => true, // Can publish their own posts
-    'upload_files' => true, // Can upload files
-));
-
-
-// Add Review Function
-function add_review($teacher_id, $review_data)
-{
-    // Get existing reviews
-    $reviews = get_user_meta($teacher_id, 'teacher_reviews', true);
-    $reviews = $reviews ? json_decode($reviews, true) : [];
-
-    // Add new review
-    $reviews[] = $review_data;
-
-    // Update user meta with new reviews
-    update_user_meta($teacher_id, 'teacher_reviews', json_encode($reviews));
-}
-
-// // Example usage
-// $teacher_id = 1; // Replace with the actual teacher ID
-// $review_data = [
-//     'reviewer_name' => 'John Doe',
-//     'rating' => 5,
-//     'comment' => 'Great teacher!',
-//     'date' => current_time('mysql')
-// ];
-// add_review($teacher_id, $review_data);
-
-
-// Hook into init action to add reviews
-// add_action('init', 'add_reviews_example');
-
-function add_reviews_example()
-{
-    // Replace with the actual teacher ID
-    $teacher_id = 6;
-
-    // Review data
-    $review_data = [
-        'reviewer_name' => 'ALim',
-        'rating' => 3,
-        'comment' => 'Great teacher! Thanks for the colaboration',
-        'date' => current_time('mysql'),
-        'image' => 'https://cdn-icons-png.flaticon.com/512/2919/2919906.png'
-    ];
-
-    // Make sure the user exists before adding a review
-    if (get_user_by('id', $teacher_id)) {
-        add_review($teacher_id, $review_data);
-    } else {
-        error_log("User with ID $teacher_id does not exist.");
-    }
-}
+/* ---------------------
+ * Custom Post Type
+ ------------------------
+ */
 
 function create_teacher_student_message_cpt()
 {
@@ -106,6 +51,9 @@ function create_teacher_student_message_cpt()
 
     register_post_type('message', $args);
 }
+// Action will be on activate
+add_action('init', 'create_teacher_student_message_cpt');
+
 
 
 
@@ -222,8 +170,9 @@ function get_user_messages($user_id)
 
 
             /* ---------------------
- *  Get Message Function
+ *  Message Shortcode
  * -------------------------- */
+
 
             function conversation_shortcode()
             {
@@ -259,7 +208,6 @@ function get_user_messages($user_id)
                     while ($messages->have_posts()) {
                         $messages->the_post();
                         $sender_id = get_post_meta(get_the_ID(), 'sender_id', true);
-                        $receiver_id = get_post_meta(get_the_ID(), 'receiver_id', true);
                         $is_read = get_post_meta(get_the_ID(), 'is_read', true);
                         $message_time = get_the_date('D, j M');
 
@@ -269,7 +217,6 @@ function get_user_messages($user_id)
                         } else {
                             // Otherwise, add a new entry for this sender
                             $message_data[$sender_id] = array(
-                                'sender_id' => $sender_id,
                                 'sender_name' => get_userdata($sender_id)->display_name,
                                 'message_time' => $message_time,
                                 'count' => !$is_read ? 1 : 0
@@ -298,31 +245,28 @@ function get_user_messages($user_id)
             <!-- Sidebar -->
             <div class="chat-sidebar">
 
-                <div class="list-group gap-3">
+                <div class="list-group">
                     <?php
-                    $active = $_GET['r'];
+
                     // Output the aggregated data
                     if (!empty($message_data)) {
                         foreach ($message_data as $data) {
+
                     ?>
-                            <a href="<?php echo home_url('/chat') . '?r=' . $data['sender_id']; ?>"
-                                class="list-group-item list-group-item-action <?php if ($active == $data['sender_id']) {
-                                                                                    echo 'active ';
-                                                                                } ?>" data-id="<?php echo $sender_id; ?>">
+                            <a href="<?php echo home_url('/chat') . '?r=' . $sender_id; ?>"
+                                class="list-group-item list-group-item-action active" data-id="<?php echo $sender_id; ?>">
                                 <div class="img">
                                     <?php $avatar_url = get_avatar_url($sender_id);
 
                                     if ($avatar_url) {
                                     ?> <img src="<?php echo $avatar_url; ?>" class="rounded-circle mr-2"
-                                            width="30" alt="<?php echo $data['sender_name']; ?>">
-                                    <?php
-                                    } else {
-                                    ?>
-                                        <img src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
-                                            class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
-                                    <?php
-                                    }
-                                    ?> <span class="text-truncate">
+                                            width="30" alt="<?php echo $data['sender_name']; ?>"> <?php
+                                                                                                } else {
+                                                                                                    ?> <img
+                                            src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                                            class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>"> <?php
+                                                                                                                            }
+                                                                                                                                ?> <span class="text-truncate">
                                         <?php echo $data['sender_name']; ?>
                                     </span>
                                     <?php
@@ -355,14 +299,14 @@ function get_user_messages($user_id)
                     <strong><?php $avatar_url = get_avatar_url($sender_id);
 
                             if ($avatar_url) {
-                            ?>
-                            <img src="<?php echo $avatar_url; ?>" class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
-                        <?php
-                            } else {
-                        ?> <img src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
+                            ?> <img src="<?php echo $avatar_url; ?>" class="rounded-circle mr-2" width="30"
+                                alt="<?php echo $data['sender_name']; ?>"> <?php
+                                                                        } else {
+                                                                            ?> <img
+                                src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
                                 class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
                         <?php
-                            }
+                                                                        }
                         ?> <?php echo $data['sender_name']; ?>
                     </strong>
                     <!-- <span class="float-right">Last seen: 2 months ago</span> -->
@@ -453,10 +397,8 @@ function get_user_messages($user_id)
                             } else {
                             ?>
                                 <div class="message sent ">
-                                    <div class="message-text"><?php echo esc_html($message_content); ?>
-                                        <div class="msg-time " style="font-weight: 300;"><?php echo esc_html($message_time); ?>
-                                        </div>
-                                    </div>
+                                    <div class="message-text"><?php echo esc_html($message_content); ?></div>
+                                    <div class="msg-time " style="font-weight: 300;"><?php echo esc_html($message_time); ?></div>
                                 </div><?php
                                     }
                                         ?>
@@ -508,6 +450,7 @@ function get_user_messages($user_id)
                 return ob_get_clean();
             }
             add_shortcode('conversation', 'conversation_shortcode');
+
 
 
             /* ---------------------
@@ -570,3 +513,195 @@ function get_user_messages($user_id)
                 return ob_get_clean();
             }
             add_shortcode('header_chat', 'is_read_or_not_header');
+
+
+
+
+            // Ajax
+            /*========================================================
+* Reply to a message
+==========================================================*/
+            function send_reply_message()
+            {
+                $sender_id = get_current_user_id();
+                $receiver_id = isset($_POST['receiver_id']) ? intval($_POST['receiver_id']) : 0;
+                $message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
+
+                if ($receiver_id <= 0 || empty($message)) {
+                    wp_send_json_error('Invalid data.');
+                    return;
+                }
+
+                // Create a new message post
+                $message_id = wp_insert_post(array(
+                    'post_type'   => 'message',
+                    'post_title'  => 'Reply from ' . get_userdata($sender_id)->display_name,
+                    'post_content' => $message,
+                    'post_status' => 'publish',
+                    'meta_input'  => array(
+                        'sender_id'  => $sender_id,
+                        'receiver_id' => $receiver_id,
+                        'is_read'    => 0, // Default to unread
+                        'is_notified'    => 0, // Default to unread
+                    ),
+                ));
+
+                if ($message_id) {
+                    wp_send_json_success('Message sent successfully.');
+                } else {
+                    wp_send_json_error('Failed to send message.');
+                }
+            }
+            add_action('wp_ajax_send_reply_message', 'send_reply_message');
+            add_action('wp_ajax_nopriv_send_reply_message', 'send_reply_message');
+
+
+
+            function get_unread_message_notification()
+            {
+                $myid = get_current_user_id();
+                $args = array(
+                    'post_type' => 'message',
+                    'meta_query' => array(
+                        array(
+                            'key' => 'receiver_id',
+                            'value' => $myid,
+                            'compare' => '='
+                        )
+                    ),
+                    'posts_per_page' => -1 // Get all messages
+                );
+
+                $messages = new WP_Query($args);
+                $total = 0;
+                $id = 0;
+                if ($messages->have_posts()) {
+                    while ($messages->have_posts()) {
+                        $messages->the_post();
+                        $sender_id = get_post_meta(get_the_ID(), 'sender_id', true);
+                        $is_notfied = get_post_meta(get_the_ID(), 'is_notified', true);
+
+                        if (! $is_notfied) {
+                            $total++;
+                            update_post_meta(get_the_ID(), 'is_notified', true);
+                            $id = $sender_id;
+                        }
+                    }
+                    wp_reset_postdata();
+                }
+
+                if ($total > 0) {
+                    if ($total < 2) {
+                        $user_info = get_userdata($id); // Get the user data
+                        $display_name = $user_info->display_name; // Get the display name
+
+                        wp_send_json([
+                            'success' => true,
+                            'm' => 'You have a new message from <strong><a href="' . home_url('/chat') . '">' . $display_name . '</a></strong>'
+                        ]);
+                    } else {
+                        wp_send_json([
+                            'success' => true,
+                            'm' => 'You have ' . $total . 'New Messages <a href="' . home_url('/chat') . '"> Chat </a>'
+                        ]);
+                    }
+                } else {
+                    wp_send_json_error('No Unread Message');
+                }
+            }
+            add_action('wp_ajax_get_unread_message_notification', 'get_unread_message_notification');
+            add_action('wp_ajax_nopriv_get_unread_message_notification', 'get_unread_message_notification');
+
+
+
+            // Scripts
+?>
+
+<script>
+    jQuery(document).ready(function($) {
+
+
+        //Message
+        $(".reply_message").click(function(e) {
+            e.preventDefault(); // Prevent the default form submission
+            $(".pre-loading").css("display", "flex");
+            // Collect form data
+            var replyMessage = $("#reply-message").val();
+            var receiverId = $(this).data("receiver-id"); // Pass receiver ID from the form data
+            if (replyMessage) {
+                // Perform AJAX request
+                $.ajax({
+                    type: "POST",
+                    url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
+                    data: {
+                        action: "send_reply_message", // Action hook to handle the AJAX request
+                        receiver_id: receiverId,
+                        message: replyMessage,
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload(); // Reload the page to show the new message
+                        } else {
+                            alert("Failed to send reply.");
+                            $(".pre-loading").css("display", "none");
+                        }
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.error("AJAX Error:", textStatus, errorThrown);
+                    },
+                });
+            } else {
+                $(".pre-loading").css("display", "none");
+                alert("Please input message First");
+            }
+        });
+
+        //Get New message
+        setInterval(function() {
+            // Create an invisible audio element and append it to the body
+            // Get the audio element by its ID
+            const audio = $("#audiomsgesound")[0];
+
+            $.ajax({
+                type: "POST",
+                url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
+                data: {
+                    action: "get_unread_message_notification", // Action hook to handle the AJAX request in your functions.php
+                },
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        // Handle success response
+                        // Reload the window
+                        //need to play an audio here. Audio is in the same folder of this js file. audio file name is m.mp3
+                        // Create an audio element and set its source
+
+                        // Play the audio when desired
+                        audio.play().catch(function(error) {
+                            console.error("Playback failed:", error);
+                        });
+
+                        $.toast({
+                            heading: "New Message",
+                            text: response.m,
+                            icon: "info",
+                            showHideTransition: "slide",
+                            position: "bottom-right",
+                            loaderBg: "#3b8dbd",
+                            hideAfter: 9000, // Hides after 9 seconds
+                            stack: false,
+                            bgColor: "#A0743B",
+                            textColor: "white",
+                        });
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    // Handle error
+                    console.error("Error:", errorThrown);
+                },
+            });
+        }, 3000);
+
+    });
+</script>
