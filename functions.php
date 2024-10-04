@@ -62,39 +62,39 @@ function add_reviews_example()
 
 function create_teacher_student_message_cpt()
 {
-    $labels = array(
-        'name' => _x('Messages', 'Post type general name', 'growgoal'),
-        'singular_name' => _x('Message', 'Post type singular name', 'growgoal'),
-        'menu_name' => _x('Messages', 'Admin Menu text', 'growgoal'),
-        'name_admin_bar' => _x('Message', 'Add New on Toolbar', 'growgoal'),
-        'add_new' => __('Add New', 'growgoal'),
-        'add_new_item' => __('Add New Message', 'growgoal'),
-        'new_item' => __('New Message', 'growgoal'),
-        'edit_item' => __('Edit Message', 'growgoal'),
-        'view_item' => __('View Message', 'growgoal'),
-        'all_items' => __('All Messages', 'growgoal'),
-        'search_items' => __('Search Messages', 'growgoal'),
-        'not_found' => __('No messages found.', 'growgoal'),
-        'not_found_in_trash' => __('No messages found in Trash.', 'growgoal'),
-        'featured_image' => _x('Message Image', 'Overrides the “Featured Image” phrase for this post type.', 'growgoal'),
-        'set_featured_image' => _x('Set message image', 'Overrides the “Set featured image” phrase for this post type.', 'growgoal'),
-        'remove_featured_image' => _x('Remove message image', 'Overrides the “Remove featured image” phrase for this post type.', 'growgoal'),
-        'use_featured_image' => _x('Use as message image', 'Overrides the “Use as featured image” phrase for this post type.', 'growgoal'),
-        'archives' => _x('Message archives', 'The post type archive label used in nav menus. Default “Post Archives”.', 'growgoal'),
-        'insert_into_item' => _x('Insert into message', 'Overrides the “Insert into post” phrase (used when inserting media into a post).', 'growgoal'),
-        'uploaded_to_this_item' => _x('Uploaded to this message', 'Overrides the “Uploaded to this post” phrase (used when viewing media attached to a post).', 'growgoal'),
-        'filter_items_list' => _x('Filter messages list', 'Screen reader text for the filter links heading on the post type listing screen.', 'growgoal'),
-        'items_list_navigation' => _x('Messages list navigation', 'Screen reader text for the pagination heading on the post type listing screen.', 'growgoal'),
-        'items_list' => _x('Messages list', 'Screen reader text for the items list heading on the post type listing screen.', 'growgoal'),
+    // Labels for Messages Post Type
+    $message_labels = array(
+        'name' => _x('Messages', 'Post type general name', 'fiverr-market'),
+        'singular_name' => _x('Message', 'Post type singular name', 'fiverr-market'),
+        'menu_name' => _x('Messages', 'Admin Menu text', 'fiverr-market'),
+        'name_admin_bar' => _x('Message', 'Add New on Toolbar', 'fiverr-market'),
+        'add_new' => __('Add New', 'fiverr-market'),
+        'add_new_item' => __('Add New Message', 'fiverr-market'),
+        'new_item' => __('New Message', 'fiverr-market'),
+        'edit_item' => __('Edit Message', 'fiverr-market'),
+        'view_item' => __('View Message', 'fiverr-market'),
+        'all_items' => __('All Messages', 'fiverr-market'),
+        'search_items' => __('Search Messages', 'fiverr-market'),
+        'not_found' => __('No messages found.', 'fiverr-market'),
+        'not_found_in_trash' => __('No messages found in Trash.', 'fiverr-market'),
+        'featured_image' => _x('Message Image', 'Overrides the “Featured Image” phrase for this post type.', 'fiverr-market'),
+        'set_featured_image' => _x('Set message image', 'Overrides the “Set featured image” phrase for this post type.', 'fiverr-market'),
+        'remove_featured_image' => _x('Remove message image', 'Overrides the “Remove featured image” phrase for this post type.', 'fiverr-market'),
+        'use_featured_image' => _x('Use as message image', 'Overrides the “Use as featured image” phrase for this post type.', 'fiverr-market'),
+        'archives' => _x('Message archives', 'The post type archive label used in nav menus. Default “Post Archives”.', 'fiverr-market'),
+        'insert_into_item' => _x('Insert into message', 'Overrides the “Insert into post” phrase (used when inserting media into a post).', 'fiverr-market'),
+        'uploaded_to_this_item' => _x('Uploaded to this message', 'Overrides the “Uploaded to this post” phrase (used when viewing media attached to a post).', 'fiverr-market'),
+        'filter_items_list' => _x('Filter messages list', 'Screen reader text for the filter links heading on the post type listing screen.', 'fiverr-market'),
+        'items_list_navigation' => _x('Messages list navigation', 'Screen reader text for the pagination heading on the post type listing screen.', 'fiverr-market'),
+        'items_list' => _x('Messages list', 'Screen reader text for the items list heading on the post type listing screen.', 'fiverr-market'),
     );
-
-
-    $args = array(
-        'labels' => $labels,
-        'public' => false, // Hides it from the front end
-        'publicly_queryable' => false, // Disables querying this post type from the front end
-        'show_ui' => true,  // Enables the UI for the post type
-        'show_in_menu' => true, // Hides it from the admin menu
+    // Arguments for Messages Post Type
+    $message_args = array(
+        'labels' => $message_labels,
+        'public' => false, // Hides from front end
+        'publicly_queryable' => false,
+        'show_ui' => true, // Shows in admin UI
+        'show_in_menu' => true,
         'query_var' => true,
         'rewrite' => array('slug' => 'message'),
         'capability_type' => 'post',
@@ -103,9 +103,54 @@ function create_teacher_student_message_cpt()
         'menu_position' => null,
         'supports' => array('title', 'editor', 'author', 'custom-fields'),
     );
+    register_post_type('message', $message_args);
+    // Labels for Teacher Post Type
+    $teacher_labels = array(
+        'name' => _x('Teachers', 'Post type general name', 'fiverr-market'),
+        'singular_name' => _x('Teacher', 'Post type singular name', 'fiverr-market'),
+        'menu_name' => _x('Teachers', 'Admin Menu text', 'fiverr-market'),
+        'name_admin_bar' => _x('Teacher', 'Add New on Toolbar', 'fiverr-market'),
+        'add_new' => __('Add New Teacher', 'fiverr-market'),
+        'add_new_item' => __('Add New Teacher', 'fiverr-market'),
+        'new_item' => __('New Teacher', 'fiverr-market'),
+        'edit_item' => __('Edit Teacher', 'fiverr-market'),
+        'view_item' => __('View Teacher', 'fiverr-market'),
+        'all_items' => __('All Teachers', 'fiverr-market'),
+        'search_items' => __('Search Teachers', 'fiverr-market'),
+        'not_found' => __('No teachers found.', 'fiverr-market'),
+        'not_found_in_trash' => __('No teachers found in Trash.', 'fiverr-market'),
+        'featured_image' => _x('Teacher Image', 'Overrides the “Featured Image” phrase for this post type.', 'fiverr-market'),
+        'set_featured_image' => _x('Set teacher image', 'Overrides the “Set featured image” phrase for this post type.', 'fiverr-market'),
+        'remove_featured_image' => _x('Remove teacher image', 'Overrides the “Remove featured image” phrase for this post type.', 'fiverr-market'),
+        'use_featured_image' => _x('Use as teacher image', 'Overrides the “Use as featured image” phrase for this post type.', 'fiverr-market'),
+        'archives' => _x('Teacher archives', 'The post type archive label used in nav menus. Default “Post Archives”.', 'fiverr-market'),
+        'insert_into_item' => _x('Insert into teacher', 'Overrides the “Insert into post” phrase.', 'fiverr-market'),
+        'uploaded_to_this_item' => _x('Uploaded to this teacher', 'Overrides the “Uploaded to this post” phrase.', 'fiverr-market'),
+        'filter_items_list' => _x('Filter teachers list', 'Screen reader text for the filter links heading on the post type listing screen.', 'fiverr-market'),
+        'items_list_navigation' => _x('Teachers list navigation', 'Screen reader text for the pagination heading on the post type listing screen.', 'fiverr-market'),
+        'items_list' => _x('Teachers list', 'Screen reader text for the items list heading on the post type listing screen.', 'fiverr-market'),
+    );
+    // Arguments for Teacher Post Type
+    $teacher_args = array(
+        'labels' => $teacher_labels,
+        'public' => true, // Show it on the front end
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'teacher'),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => null,
+        'supports' => array('title', 'editor', 'author', 'custom-fields', 'thumbnail'),
+    );
 
-    register_post_type('message', $args);
+    register_post_type('teacher', $teacher_args);
 }
+
+add_action('init', 'create_teacher_student_message_cpt');
+
 
 
 
@@ -346,13 +391,16 @@ function get_user_messages($user_id)
             </div>
             <?php  // Get sender ID from URL parameter
                 $sender_id = isset($_GET['r']) ? intval($_GET['r']) : $sender_id;
-                $current_user_id = get_current_user_id();
-            ?>
+                $user_id = $sender_id;
+                $profile_id = get_user_meta($sender_id,'profile_picture',true);
+                $avatar_url = wp_get_attachment_url($profile_id);
+                
 
+            ?>
             <div class="chat-main">
                 <!-- Chat Header -->
                 <div class="chat-header">
-                    <strong><?php $avatar_url = get_avatar_url($sender_id);
+                    <strong><?php
 
                             if ($avatar_url) {
                             ?>
@@ -426,6 +474,8 @@ function get_user_messages($user_id)
 
                     <!-- Example Messages -->
                     <?php
+                     
+
                     if ($messages->have_posts()) {
                         while ($messages->have_posts()) {
                             $messages->the_post();
@@ -480,9 +530,8 @@ function get_user_messages($user_id)
                         placeholder="Type your message here..."></textarea>
 
                     <div class="chat-footer-buttons">
-                        <button class="btn btn-secondary" id="attach-btn"><i class="fas fa-paperclip"></i>
-                            Attach</button>
-                        <input type="file" id="file-upload-input" style="display: none;">
+                        <button class="btn btn-primary" id="attach-btn"><i class="fas fa-plus"></i>
+                            Send Invitation</button>
                         <button type="submit" style="width: 120px; font-size: 16px"
                             class="btn btn-primary reply_message"
                             data-receiver-id="<?php echo esc_attr($sender_id); ?>">Send <i style="font-size: 20px;"
@@ -570,3 +619,6 @@ function get_user_messages($user_id)
                 return ob_get_clean();
             }
             add_shortcode('header_chat', 'is_read_or_not_header');
+
+
+?>
