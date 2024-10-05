@@ -18,6 +18,7 @@
 	exit; // Exit if accessed directly.
 	}
 
+	require_once(__DIR__.'/d-tag.php');
 	require_once(__DIR__.'/ajax.php');
 	require_once(__DIR__.'/functions.php');
 	function fiverr_market_enque_scripts()
@@ -25,11 +26,13 @@
 	//css
 	wp_enqueue_style('fiverr-market-style', plugin_dir_url(__FILE__) . '/style.css' );
 	wp_enqueue_style('fiverr-market-bootstrap-style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css' );
+	wp_enqueue_style('fiverr-market-bootstrap-datepicker-style', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css' );
 
 	//js
 	wp_enqueue_script('fiverr-market-jquery-script',  'https://code.jquery.com/jquery-3.7.1.min.js' , array(), '1.0.0', true);
 	wp_enqueue_script('fiverr-market-script', plugin_dir_url(__FILE__) . 'scripts.js' , array('fiverr-market-jquery-script'), '1.0.0', true);
 	wp_enqueue_script('fiverr-market-font-owesomw-script', 'https://kit.fontawesome.com/46882cce5e.js' , array(), null, true);
+	wp_enqueue_script('fiverr-market-date-picker-script', 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js' , array(), null, true);
 	wp_enqueue_script('fiverr-market-toast-script',plugin_dir_url(__FILE__) . 'jquery.toast.js', array('jquery'), null, true);
 
 	// Localize the script with new data

@@ -1,6 +1,7 @@
-<?php 
+<?php
 
-function add_new_teacher() {
+function add_new_teacher()
+{
     // Check nonce for security (if you've set one)
     // check_ajax_referer('your_nonce_action', 'nonce');
 
@@ -13,30 +14,28 @@ function add_new_teacher() {
     $expertise = sanitize_text_field($_POST['expertise']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    error_log('Sanitization done.');
-    
+
+
     // Check if password and confirm password match
     if ($password !== $confirm_password) {
         wp_send_json_error(['message' => 'Passwords do not match.']);
-        error_log('Passwords do not match.');
-        error_log('Password not match.');
     }
-    
+
     // Create the user
     $user_id = wp_create_user($username, $password, $email);
-    
+
     if (is_wp_error($user_id)) {
         wp_send_json_error(['message' => $user_id->get_error_message()]);
-        error_log('message = '. $user_id->get_error_message());
+        error_log('message = ' . $user_id->get_error_message());
     }
-    
+
     // Set additional user meta
     update_user_meta($user_id, 'first_name', $first_name);
     update_user_meta($user_id, 'last_name', $last_name);
     update_user_meta($user_id, 'phone_number', $phone_number);
     update_user_meta($user_id, 'expertice', $expertise);
-    error_log('Metadata updated.');
-    
+
+
     // Process profile picture upload
     if (isset($_FILES['profile_picture']) && !empty($_FILES['profile_picture']['name'])) {
         $profile_picture = upload_image($_FILES['profile_picture']);
@@ -47,7 +46,7 @@ function add_new_teacher() {
             wp_send_json_error(['message' => 'Profile picture upload failed.']);
         }
     }
-    
+
     // Process cover image upload
     if (isset($_FILES['cover_image']) && !empty($_FILES['cover_image']['name'])) {
         $cover_image = upload_image($_FILES['cover_image']);
@@ -63,7 +62,7 @@ function add_new_teacher() {
     $user = new WP_User($user_id);
     $user->set_role('teacher');
 
-  // Create a new post of type 'teacher'
+    // Create a new post of type 'teacher'
     $post_data = [
         'post_title'   => $first_name . ' ' . $last_name,
         'post_status'  => 'publish',
@@ -102,7 +101,8 @@ add_action('wp_ajax_add_new_teacher', 'add_new_teacher');
 add_action('wp_ajax_nopriv_add_new_teacher', 'add_new_teacher'); // For non-logged-in users (optional)
 
 // Helping function of add new teacher
-function upload_image($file) {
+function upload_image($file)
+{
     require_once(ABSPATH . 'wp-admin/includes/file.php');
     require_once(ABSPATH . 'wp-admin/includes/media.php');
     require_once(ABSPATH . 'wp-admin/includes/image.php');
@@ -114,7 +114,7 @@ function upload_image($file) {
     if (!isset($upload['error'])) {
         $filetype = wp_check_filetype($upload['file']);
         $attachment = array(
-            'guid'           => $upload['url'], 
+            'guid'           => $upload['url'],
             'post_mime_type' => $filetype['type'],
             'post_title'     => sanitize_file_name($file['name']),
             'post_content'   => '',
@@ -137,7 +137,7 @@ function upload_image($file) {
 }
 
 
- /*========================================================
+/*========================================================
 * Reply to a message
 ==========================================================*/
 function send_reply_message()
@@ -154,7 +154,7 @@ function send_reply_message()
     // Create a new message post
     $message_id = wp_insert_post(array(
         'post_type'   => 'message',
-        'post_title'  => 'Reply from ' . get_userdata($sender_id)->display_name,
+        'post_title'  => 'Reply from ' . get_userdata($sender_id)->display_name . ' To: ' . get_userdata($receiver_id)->display_name,
         'post_content' => $message,
         'post_status' => 'publish',
         'meta_input'  => array(
@@ -173,6 +173,66 @@ function send_reply_message()
 }
 add_action('wp_ajax_send_reply_message', 'send_reply_message');
 add_action('wp_ajax_nopriv_send_reply_message', 'send_reply_message');
+
+
+function invitation_send_to_teacher()
+{
+    // Check if the user is logged in
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error('You must be logged in to send invitations.');
+        return;
+    }
+
+    // Sanitize and retrieve form data
+    $sender_id = get_current_user_id();
+
+    $student_id = isset($_POST['student']) ? intval($_POST['student']) : 0;
+    $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+    $time = isset($_POST['time']) ? sanitize_text_field($_POST['time']) : '';
+    $amount = isset($_POST['amount']) ? sanitize_text_field($_POST['amount']) : '';
+    $length = isset($_POST['length']) ? sanitize_text_field($_POST['length']) : '';
+
+    error_log($sender_id);
+    error_log($date);
+    error_log($time);
+    error_log($amount);
+    error_log($length);
+
+    // Check if required fields are filled
+    if (empty($student_id) || empty($date) || empty($time)) {
+        wp_send_json_error('Please fill in all required fields.');
+        return;
+    }
+
+    // Create a new message post
+    $message_id = wp_insert_post(array(
+        'post_type'   => 'message',
+        'post_title'  => 'Reply from ' . get_userdata($sender_id)->display_name . ' To: ' . get_userdata($student_id)->display_name,
+        'post_content' => 'Invitation', // You can modify this to include more info if needed
+        'post_status' => 'publish',
+        'meta_input'  => array(
+            'sender_id'    => $sender_id,
+            'receiver_id'  => $student_id,
+            'date'         => $date,
+            'time'         => $time,
+            'amount'       => $amount,
+            'length'       => $length,
+            'is_read'      => 0, // Default to unread
+            'is_notified'  => 0, // Default to unnotified
+        ),
+    ));
+
+    // Check if the post was created successfully
+    if ($message_id) {
+        wp_send_json_success('Invitation sent successfully.');
+    } else {
+        wp_send_json_error('Failed to send invitation.');
+    }
+}
+
+add_action('wp_ajax_invitation_send_to_teacher', 'invitation_send_to_teacher');
+add_action('wp_ajax_nopriv_invitation_send_to_teacher', 'invitation_send_to_teacher');
+
 
 
 
@@ -216,12 +276,12 @@ function get_unread_message_notification()
 
             wp_send_json([
                 'success' => true,
-                'm' => 'You have a new message from <strong><a href="' . home_url('/chat') . '">' . $display_name . '</a></strong>'
+                'm' => 'You have a new message from <strong><a href="' . home_url('/chat?r='.$id) . '">' . $display_name . '</a></strong>'
             ]);
         } else {
             wp_send_json([
                 'success' => true,
-                'm' => 'You have ' . $total . 'New Messages <a href="' . home_url('/chat') . '"> Chat </a>'
+                'm' => 'You have ' . $total . 'New Messages <a href="' . home_url('/chat?r='.$id) . '"> Chat </a>'
             ]);
         }
     } else {
@@ -230,3 +290,4 @@ function get_unread_message_notification()
 }
 add_action('wp_ajax_get_unread_message_notification', 'get_unread_message_notification');
 add_action('wp_ajax_nopriv_get_unread_message_notification', 'get_unread_message_notification');
+

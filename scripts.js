@@ -2,8 +2,10 @@
 $(document).ready(function () {
   console.log('initiate 1.1');
 
-  
-  console.log('initiate 1.10');
+  if ($('.chat-messages').length) {
+    $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+  }
+
   // Custom validation with jQuery
   $("#registration_form").on("submit", function (event) {
     var form = $(this)[0];
@@ -124,8 +126,7 @@ $(document).ready(function () {
   setInterval(function () {
     // Create an invisible audio element and append it to the body
     // Get the audio element by its ID
-    const audio = $("#audiomsgesound")[0];
-
+    
     $.ajax({
       type: "POST",
       url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
@@ -140,7 +141,8 @@ $(document).ready(function () {
           // Reload the window
           //need to play an audio here. Audio is in the same folder of this js file. audio file name is m.mp3
           // Create an audio element and set its source
-
+          
+          const audio = $("#audiomsgesound")[0];
           // Play the audio when desired
           audio.play().catch(function (error) {
             console.error("Playback failed:", error);
@@ -151,7 +153,7 @@ $(document).ready(function () {
             text: response.m,
             icon: "info",
             showHideTransition: "slide",
-            position: "bottom-right",
+            position: "bottom-left",
             loaderBg: "#3b8dbd",
             hideAfter: 9000, // Hides after 9 seconds
             stack: false,
@@ -166,6 +168,75 @@ $(document).ready(function () {
       },
     });
   }, 3000);
+
+  // Send Invitation
+  $('#send-invitation').click(function (e) {
+    console.log('object');
+    $('.chat-popup').css('display', 'flex');
+  })
+  $('.cencel-invitation').click(function (e) {
+    $('.chat-popup').css('display', 'none');
+  })
+
+
+  $(".send-invitation-confirm").click(function (e) {
+    e.preventDefault(); // Add parentheses here to prevent the default action of the form
+
+    var formData = new FormData();
+    formData.append("action", "invitation_send_to_teacher"); // Pass the action
+    formData.append("student", $("#student").val());
+    formData.append("teacher", $("#teacher").val());
+    formData.append("date", $("#date").val());
+    formData.append("time", $("#time").val());
+    formData.append("amount", $("#amount").val());
+    formData.append("length", $("#length").val());
+
+    let isValid = true; // Flag to track if all fields are filled
+
+    formData.forEach((value, key) => {
+        if (!value) { // If value is empty or null
+            alert(key + " is required. Please fill this field.");
+            isValid = false;
+            return false; // Stop the loop once an empty field is found
+        }
+    });
+
+    if (isValid) {
+        $(".pre-loading").css("display", "flex"); // Show pre-loading
+        $('.chat-popup').css('display', 'none');  // Hide the chat popup
+
+        // Perform AJAX request
+        $.ajax({
+            type: "POST",
+            url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
+            data: formData,
+            processData: false,   // Prevent jQuery from processing the data
+            contentType: false,   // Set content type to false to send FormData correctly
+            success: function (response) {
+                console.log(response);  // Handle successful response
+                if (response.success) {
+                  // Optionally, reload or perform any action after success
+                  // location.reload(); 
+                  console.log("Invitation sent successfully.");
+                } else {
+                  console.log(response);  // Handle successful response
+                    alert("Failed to send invitation.");
+                }
+                $(".pre-loading").css("display", "none"); // Hide pre-loading after success or failure
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.error("AJAX Error:", textStatus, errorThrown);
+                $(".pre-loading").css("display", "none"); // Hide pre-loading on error
+            }
+        });
+    }
+});
+
+
+
+
+
+  console.log('initiate 2.1');
 
 
 });

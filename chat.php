@@ -702,6 +702,5 @@ function get_user_messages($user_id)
                 },
             });
         }, 3000);
-
     });
 </script>

@@ -207,7 +207,7 @@
 }
 .jq-icon-info {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVEhLtZa9SgNBEMc9sUxxRcoUKSzSWIhXpFMhhYWFhaBg4yPYiWCXZxBLERsLRS3EQkEfwCKdjWJAwSKCgoKCcudv4O5YLrt7EzgXhiU3/4+b2ckmwVjJSpKkQ6wAi4gwhT+z3wRBcEz0yjSseUTrcRyfsHsXmD0AmbHOC9Ii8VImnuXBPglHpQ5wwSVM7sNnTG7Za4JwDdCjxyAiH3nyA2mtaTJufiDZ5dCaqlItILh1NHatfN5skvjx9Z38m69CgzuXmZgVrPIGE763Jx9qKsRozWYw6xOHdER+nn2KkO+Bb+UV5CBN6WC6QtBgbRVozrahAbmm6HtUsgtPC19tFdxXZYBOfkbmFJ1VaHA1VAHjd0pp70oTZzvR+EVrx2Ygfdsq6eu55BHYR8hlcki+n+kERUFG8BrA0BwjeAv2M8WLQBtcy+SD6fNsmnB3AlBLrgTtVW1c2QN4bVWLATaIS60J2Du5y1TiJgjSBvFVZgTmwCU+dAZFoPxGEEs8nyHC9Bwe2GvEJv2WXZb0vjdyFT4Cxk3e/kIqlOGoVLwwPevpYHT+00T+hWwXDf4AJAOUqWcDhbwAAAAASUVORK5CYII=");
-  background-color: #4780A6 !important;
+  background-color: #4780a6 !important;
   color: #d9edf7;
   border-color: #bce8f1;
 }
@@ -233,7 +233,6 @@
 /* Toast CSS. 
 ===========================================================
 */
-
 
 .container .row {
   padding: 0;
@@ -923,9 +922,9 @@ body .tutor-dashboard .tutor-dashboard-content .tutor-capitalize-text {
   display: flex;
   flex-direction: column;
 }
-.chat-main .chat-header img.rounded-circle{
-height: 30px ;
-object-fit: cover;
+.chat-main .chat-header img.rounded-circle {
+  height: 30px;
+  object-fit: cover;
 }
 
 .chat-header,
@@ -1043,6 +1042,10 @@ object-fit: cover;
   right: -5px;
 }
 
+.objerct-fit-cover {
+  object-fit: cover !important;
+}
+
 .chat-button .unread .circle {
   background-color: #ff3700;
   border-radius: 50px;
@@ -1063,4 +1066,61 @@ object-fit: cover;
 }
 .chat-sidebar .list-group a.list-group-item:hover {
   background-color: #bfbfbf;
+}
+
+.chat-messages .chat-popup {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: #efefef;
+  top: 0;
+  left: 0;
+  z-index: 120;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+}
+.chat-messages .chat-popup .card-header {
+  text-align: center;
+}
+.chat-messages .chat-popup .card-header .teacher-students {
+  max-width: 70%;
+  margin: 0 auto;
+}
+.chat-messages .chat-popup .card-header .teacher-students {
+  font-size: 11px;
+}
+.chat-messages .chat-popup .card-header .teacher-students .t-name {
+  font-size: 11px;
+  background-color: #dba82750;
+  padding: 6px 12px;
+  margin: 5px 0 0 0;
+  border-radius: 6px;
+}
+
+.offer-box {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card.offer-box {
+  text-align: left;
+  width: 250px;
+}
+
+.offer-header {
+  font-weight: bold;
+}
+
+.offer-price {
+  color: #28a745; /* Bootstrap success color */
+}
+
+.accept-btn {
+  background-color: #007bff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }

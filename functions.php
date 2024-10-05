@@ -158,6 +158,7 @@ add_action('init', 'create_teacher_student_message_cpt');
  *  Get Message Function
  * -------------------------- */
 
+
 function get_user_messages($user_id)
 {
     // Query to get all messages for the user
@@ -265,7 +266,6 @@ function get_user_messages($user_id)
                 }
             }
 
-
             /* ---------------------
  *  Get Message Function
  * -------------------------- */
@@ -286,14 +286,22 @@ function get_user_messages($user_id)
                 $args = array(
                     'post_type' => 'message',
                     'meta_query' => array(
+                        'relation' => 'OR',
+                        array(
+                            'key' => 'sender_id',
+                            'value' => $current_user_id,
+                            'compare' => '='
+                        ),
                         array(
                             'key' => 'receiver_id',
                             'value' => $current_user_id,
                             'compare' => '='
-                        )
+                        ),
                     ),
-                    'posts_per_page' => -1 // Get all messages
+
+                    'posts_per_page' => -1 // Retrieve all messages
                 );
+
 
                 $messages = new WP_Query($args);
 
@@ -309,16 +317,26 @@ function get_user_messages($user_id)
                         $message_time = get_the_date('D, j M');
 
                         // If this sender already exists in the array, update the count
-                        if (isset($message_data[$sender_id])) {
-                            $message_data[$sender_id]['count'] += !$is_read ? 1 : 0;
+                        if (isset($message_data[$sender_id . $receiver_id])) {
+                            $message_data[$sender_id . $receiver_id]['count'] += !$is_read ? 1 : 0;
                         } else {
-                            // Otherwise, add a new entry for this sender
-                            $message_data[$sender_id] = array(
-                                'sender_id' => $sender_id,
-                                'sender_name' => get_userdata($sender_id)->display_name,
-                                'message_time' => $message_time,
-                                'count' => !$is_read ? 1 : 0
-                            );
+                            if (isset($message_data[$receiver_id . $sender_id])) {
+
+                                $message_data[$receiver_id . $sender_id]['count'] += !$is_read ? 1 : 0;
+                            } else {
+                                if ($sender_id == $current_user_id) {
+                                    $id = $receiver_id;
+                                } else {
+                                    $id = $sender_id;
+                                }
+                                // Otherwise, add a new entry for this sender
+                                $message_data[$sender_id . $receiver_id] = array(
+                                    'sender_id' => $id,
+                                    'sender_name' => get_userdata($id)->display_name,
+                                    'message_time' => $message_time,
+                                    'count' => !$is_read ? 1 : 0
+                                );
+                            }
                         }
                     }
                     wp_reset_postdata();
@@ -340,6 +358,7 @@ function get_user_messages($user_id)
         </div>
 
         <div class="chat-container">
+
             <!-- Sidebar -->
             <div class="chat-sidebar">
 
@@ -351,24 +370,32 @@ function get_user_messages($user_id)
                         foreach ($message_data as $data) {
                     ?>
                             <a href="<?php echo home_url('/chat') . '?r=' . $data['sender_id']; ?>"
-                                class="list-group-item list-group-item-action <?php if ($active == $data['sender_id']) {
-                                                                                    echo 'active ';
-                                                                                } ?>" data-id="<?php echo $sender_id; ?>">
+                                class="list-group-item list-group-item-action 
+                                <?php
+                                if ($active == $data['sender_id']) {
+                                    echo 'active ';
+                                } ?>" data-id="<?php echo $data['sender_id']; ?>">
                                 <div class="img">
-                                    <?php $avatar_url = get_avatar_url($sender_id);
+                                    <?php
+                                    $user_id = $data['sender_id'];
+                                    $name = get_the_author_meta('display_name', $user_id);
+                                    $profile_id = get_user_meta($user_id, 'profile_picture', true);
+                                    $avatar_url = wp_get_attachment_url($profile_id);
+
+                                    // $avatar_url = get_avatar_url($data['sender_id']);
 
                                     if ($avatar_url) {
                                     ?> <img src="<?php echo $avatar_url; ?>" class="rounded-circle mr-2"
-                                            width="30" alt="<?php echo $data['sender_name']; ?>">
+                                            width="30" alt="<?php echo $data['sender_id'] . $data['sender_name']; ?>">
                                     <?php
                                     } else {
                                     ?>
                                         <img src="https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=612x612&w=0&k=20&c=s0aTdmT5aU6b8ot7VKm11DeID6NctRCpB755rA1BIP0="
-                                            class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
+                                            class="rounded-circle objerct-fit-cover mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
                                     <?php
                                     }
                                     ?> <span class="text-truncate">
-                                        <?php echo $data['sender_name']; ?>
+                                        <?php echo  $data['sender_name']; ?>
                                     </span>
                                     <?php
                                     if ($data['count'] > 0) {
@@ -392,16 +419,16 @@ function get_user_messages($user_id)
             <?php  // Get sender ID from URL parameter
                 $sender_id = isset($_GET['r']) ? intval($_GET['r']) : $sender_id;
                 $user_id = $sender_id;
-                $profile_id = get_user_meta($sender_id,'profile_picture',true);
+                $name = get_the_author_meta('display_name', $user_id);
+                $profile_id = get_user_meta($sender_id, 'profile_picture', true);
                 $avatar_url = wp_get_attachment_url($profile_id);
-                
+
 
             ?>
             <div class="chat-main">
                 <!-- Chat Header -->
                 <div class="chat-header">
                     <strong><?php
-
                             if ($avatar_url) {
                             ?>
                             <img src="<?php echo $avatar_url; ?>" class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
@@ -411,7 +438,7 @@ function get_user_messages($user_id)
                                 class="rounded-circle mr-2" width="30" alt="<?php echo $data['sender_name']; ?>">
                         <?php
                             }
-                        ?> <?php echo $data['sender_name']; ?>
+                        ?> <?php echo $name; ?>
                     </strong>
                     <!-- <span class="float-right">Last seen: 2 months ago</span> -->
                 </div>
@@ -465,6 +492,10 @@ function get_user_messages($user_id)
                 $messages = new WP_Query($args);
 
 
+                $myid = get_current_user_id();
+                $myname = get_the_author_meta('display_name', $myid);
+                $student_id = isset($_GET['r']) ? intval($_GET['r']) : $sender_id;
+                $student_name = get_the_author_meta('display_name', $student_id);
 
 
                 ?>
@@ -472,14 +503,142 @@ function get_user_messages($user_id)
                 <!-- Chat Messages -->
                 <div class="chat-messages position-relative">
 
+                    <!-- Popup -->
+
+                    <div class="chat-messages">
+                        <div class="chat-popup">
+                            <div class="container mt-5">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header text-center">
+                                                <h4>Send Invitation</h4>
+                                                <div class="teacher-students d-flex justify-content-between">
+                                                    <div class="teacher d-flex flex-column" data-id="45">
+                                                        <div class="">Teacher</div>
+                                                        <div class="t-name"><?php echo $myname; ?></div>
+                                                    </div>
+                                                    <div class="student d-flex flex-column" data-id="45">
+                                                        <div class="">Student</div>
+                                                        <div class="t-name"><?php echo $student_name; ?></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="form-row d-none">
+                                                        <!-- First Column: Date Picker Field -->
+                                                        <div class="col-md-6 mb-3">
+                                                            <input
+                                                                type="text"
+                                                                class="form-control datepicker"
+                                                                id="teacher"
+                                                                name="teacher"
+                                                                value="<?php echo $myid; ?>" />
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <input
+                                                                type="text"
+                                                                class="form-control datepicker"
+                                                                id="student"
+                                                                name="student"
+                                                                value="<?php echo $student_id; ?>" />
+                                                        </div>
+                                                        <!-- Second Column: Time Field -->
+
+                                                    </div>
+                                                    <div class="form-row row">
+                                                        <!-- First Column: Date Picker Field -->
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="date">Select Date</label>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control datepicker"
+                                                                id="date"
+                                                                name="date"
+                                                                placeholder="Select Date"
+                                                                required />
+                                                        </div>
+                                                        <!-- Second Column: Time Field -->
+                                                        <div class="col-md-6 mb-2">
+                                                            <label for="time">Select Time</label>
+                                                            <input
+                                                                type="time"
+                                                                class="form-control"
+                                                                id="time"
+                                                                name="time"
+                                                                placeholder="Select Time"
+                                                                required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row row">
+                                                        <!-- First Column: Amount Field -->
+                                                        <div class="col-md-6 mb-2">
+                                                            <input
+                                                                type="number"
+                                                                class="form-control"
+                                                                id="amount"
+                                                                name="amount"
+                                                                placeholder="Enter Amount"
+                                                                required />
+                                                        </div>
+                                                        <!-- Second Column: Class Length Field -->
+                                                        <div class="col-md-6 mb-2">
+                                                            <select name="length" id="length" class="form-control form-select h-100">
+                                                                <option value="15">15 Munites</option>
+                                                                <option value="30">30 Munites</option>
+                                                                <option value="45">45 Munites</option>
+                                                                <option value="60" selected>60 Munites</option>
+                                                                <option value="75">75 Munites</option>
+                                                                <option value="90">90 Munites</option>
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row d-none">
+                                                        <!-- Hidden Coupon Code Field (Full-Width) -->
+                                                        <div class="col-md-12 mb-2">
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="coupon"
+                                                                name="coupon"
+                                                                placeholder="Coupon Code" />
+                                                        </div>
+                                                    </div>
+                                                    <!-- Full-Width Submit Button -->
+                                                    <div class="text-center">
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-primary w-100 send-invitation-confirm">
+                                                            Send Invitation
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-danger w-100 cencel-invitation">
+                                                            Cencel
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Example Messages -->
                     <?php
-                     
+
 
                     if ($messages->have_posts()) {
                         while ($messages->have_posts()) {
                             $messages->the_post();
                             $is_read = get_post_meta(get_the_ID(), 'is_read', true);
+                            $amount = get_post_meta(get_the_ID(), 'amount', true) ? true : false;
                             $author_id = get_the_author_meta('ID');
                             $current_user_id = get_current_user_id();
                             if ($author_id !== $current_user_id) {
@@ -494,19 +653,138 @@ function get_user_messages($user_id)
                             if ($left) {
                     ?>
                                 <div class="message received border-0 <?php echo $message_class; ?>">
-                                    <div class="message-text"><?php echo esc_html($message_content); ?>
-                                        <div class="msg-time " style="font-weight: 300;"><?php echo esc_html($message_time); ?>
+                                    <?php
+                                    if ($amount) {
+                                        $myid = get_current_user_id();
+                                        $sender_id = get_post_meta(get_the_ID(), 'sender_id', true);
+                                        $receiver_id = get_post_meta(get_the_ID(), 'receiver_id', true);
+                                        $amount = get_post_meta(get_the_ID(), 'amount', true);
+                                        $date = get_post_meta(get_the_ID(), 'date', true);
+                                        $time = get_post_meta(get_the_ID(), 'time', true);
+                                        $length = get_post_meta(get_the_ID(), 'length', true);
+                                        $is_accepted = get_post_meta(get_the_ID(), 'is_accepted', true);
+                                        $teacher_name = get_userdata($sender_id)->display_name;
+                                        $student_name = get_userdata($receiver_id)->display_name;
+                                        $is_me_student =  $myid == $receiver_id ? true : false;
+                                    ?>
+
+                                        <div class="card offer-box mb-3">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <span class="offer-title">Invitation</span>
+                                                <span class="offer-price h5 mb-0">$<?php echo $amount; ?></span>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="p-0 m-0"><strong>Teacher:</strong> <?php echo $teacher_name; ?></p>
+                                                <p class="p-0 m-0"><strong>Student:</strong> <?php echo $student_name; ?></p>
+                                                <p class="p-0 m-0"><strong>Date:</strong> <?php echo $date; ?></p>
+                                                <p class="p-0 m-0"><strong>Start Time:</strong><?php echo $time; ?> </p>
+                                                <p class="p-0 m-0"><strong>Duration:</strong> <?php echo $length; ?></p>
+                                            </div>
+                                            <div class="card-footer text-center w-100">
+                                                <?php
+                                                if ($is_me_student) {
+                                                    if ($is_accepted) {
+                                                ?>
+                                                        <button class="btn btn-desable w-100" disabled>Accepted</button>
+
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                        <button class="btn btn-primary accept-btn w-100">Accept it now</button>
+                                                <?php
+                                                    }
+                                                }else {
+                                                    ?>
+                                                    <button class="btn btn-desable w-100" disabled>Offer Sent</button>
+
+                                                <?php
+                                                }
+                                                ?>
+                                            </div>
                                         </div>
-                                    </div>
+
+                                    <?php
+                                    } else {
+                                    ?>
+
+                                        <div class="message-text"><?php echo esc_html($message_content); ?>
+                                            <div class="msg-time " style="font-weight: 300;"><?php echo esc_html($message_time); ?>
+                                            </div>
+                                        </div>
+
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
                             <?php
+
                             } else {
                             ?>
-                                <div class="message sent ">
-                                    <div class="message-text"><?php echo esc_html($message_content); ?>
-                                        <div class="msg-time " style="font-weight: 300;"><?php echo esc_html($message_time); ?>
+                                <div class="message sent border-0 <?php echo $message_class; ?>">
+                                    <?php
+                                    if ($amount) {
+                                        $myid = get_current_user_id();
+                                        $sender_id = get_post_meta(get_the_ID(), 'sender_id', true);
+                                        $receiver_id = get_post_meta(get_the_ID(), 'receiver_id', true);
+                                        $amount = get_post_meta(get_the_ID(), 'amount', true);
+                                        $date = get_post_meta(get_the_ID(), 'date', true);
+                                        $time = get_post_meta(get_the_ID(), 'time', true);
+                                        $length = get_post_meta(get_the_ID(), 'length', true);
+                                        $is_accepted = get_post_meta(get_the_ID(), 'is_accepted', true);
+                                        $teacher_name = get_userdata($sender_id)->display_name;
+                                        $student_name = get_userdata($receiver_id)->display_name;
+                                        $is_me_student =  $myid == $receiver_id ? true : false;
+                                    ?>
+
+                                        <div class="card offer-box mb-3">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <span class="offer-title">Invitation</span>
+                                                <span class="offer-price h5 mb-0">$<?php echo $amount; ?></span>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="p-0 m-0"><strong>Teacher:</strong> <?php echo $teacher_name; ?></p>
+                                                <p class="p-0 m-0"><strong>Student:</strong> <?php echo $student_name; ?></p>
+                                                <p class="p-0 m-0"><strong>Date:</strong> <?php echo $date; ?></p>
+                                                <p class="p-0 m-0"><strong>Start Time:</strong><?php echo $time; ?> </p>
+                                                <p class="p-0 m-0"><strong>Duration:</strong> <?php echo $length; ?></p>
+                                            </div>
+                                            <div class="card-footer text-center w-100">
+                                                <?php
+                                                if ($is_me_student) {
+                                                    if ($is_accepted) {
+                                                ?>
+                                                        <button class="btn btn-desable w-100" disabled>Accepted</button>
+
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                        <button class="btn btn-primary accept-btn w-100">Accept it now</button>
+                                                <?php
+                                                    }
+                                                } else {
+                                                    ?>
+                                                    <button class="btn btn-desable w-100" disabled>Offer Sent</button>
+
+                                                <?php
+                                                }
+                                                ?>
+                                            </div>
                                         </div>
-                                    </div>
+
+                                    <?php
+                                    } else {
+                                    ?>
+
+                                        <div class="message-text"><?php echo esc_html($message_content); ?>
+                                            <div class="msg-time " style="font-weight: 300;"><?php echo esc_html($message_time); ?>
+                                            </div>
+                                        </div>
+
+                                    <?php
+                                    }
+                                    ?>
+
+
                                 </div><?php
                                     }
                                         ?>
@@ -530,23 +808,29 @@ function get_user_messages($user_id)
                         placeholder="Type your message here..."></textarea>
 
                     <div class="chat-footer-buttons">
-                        <button class="btn btn-primary" id="attach-btn"><i class="fas fa-plus"></i>
-                            Send Invitation</button>
+                        <?php
+                        // If current login user is an teacher.
+                        if (current_user_can('teacher') || current_user_can('administrator')) {
+                        ?>
+                            <button class="btn btn-primary" id="send-invitation"><i class="fas fa-plus"></i>
+                                Send Invitation</button>
+
+                        <?php } else {
+                        ?>
+                            <div class="" id=""> </div>
+                        <?php
+                        } ?>
                         <button type="submit" style="width: 120px; font-size: 16px"
                             class="btn btn-primary reply_message"
                             data-receiver-id="<?php echo esc_attr($sender_id); ?>">Send <i style="font-size: 20px;"
                                 class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
-            </div>
 
+
+            </div>
         </div>
     </div>
-</div>
-
-
-
-
 
 </div>
 </div>
@@ -619,6 +903,25 @@ function get_user_messages($user_id)
                 return ob_get_clean();
             }
             add_shortcode('header_chat', 'is_read_or_not_header');
+
+
+
+            function chat_url()
+            {
+                // Get the current post ID
+                $post_id = get_the_ID();
+
+                // Get the author (teacher) ID
+                $teacher_id = get_the_author_meta('ID');
+
+                // Build the chat URL with the post ID as a parameter
+                $chat_url = home_url('/chat?r=' . $teacher_id);
+
+                // Return the chat URL (shortcodes should return, not echo)
+                return esc_url($chat_url);
+            }
+            add_shortcode('chat_url', 'chat_url');
+
 
 
 ?>
