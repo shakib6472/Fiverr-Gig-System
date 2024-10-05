@@ -63,6 +63,37 @@ function add_new_teacher() {
     $user = new WP_User($user_id);
     $user->set_role('teacher');
 
+  // Create a new post of type 'teacher'
+    $post_data = [
+        'post_title'   => $first_name . ' ' . $last_name,
+        'post_status'  => 'publish',
+        'post_type'    => 'teacher',
+        'post_author'  => $user_id // Set the registered user as the author
+    ];
+    $post_id = wp_insert_post($post_data);
+
+    if (is_wp_error($post_id)) {
+        wp_send_json_error(['message' => 'Teacher post creation failed.']);
+        error_log('Error creating teacher post: ' . $post_id->get_error_message());
+        return; // Stop further execution
+    }
+
+    // Add the same meta fields to the post
+    update_post_meta($post_id, 'first_name', $first_name);
+    update_post_meta($post_id, 'last_name', $last_name);
+    update_post_meta($post_id, 'phone_number', $phone_number);
+    update_post_meta($post_id, 'expertise', $expertise);
+
+    // Set the profile picture as the post thumbnail (featured image)
+    if (isset($profile_picture)) {
+        set_post_thumbnail($post_id, $profile_picture); // Assuming $profile_picture is the attachment ID
+    }
+
+    // Set the cover image as post meta (if needed for additional display)
+    if (isset($cover_image)) {
+        update_post_meta($post_id, 'cover_image', $cover_image); // Add cover image meta to the post
+    }
+
     // Send success response
     wp_send_json_success(['message' => 'User created successfully!']);
 }

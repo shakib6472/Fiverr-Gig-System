@@ -65,6 +65,29 @@ class Elementor_fiverr_market_teacher_loop extends \Elementor\Widget_Base
                     $reviews = $reviews ? json_decode($reviews, true) : [];
                     $total_review = count($reviews);
                     $total_star = 0;
+
+
+                    $args = array(
+                        'post_type' => 'teacher', // Post-type key
+                        'posts_per_page' => 1, // -1 retrieves all posts
+                        'author' => $teacher->ID, 
+                    );
+                    
+                    $query = new WP_Query($args);
+                    
+                    if ($query->have_posts()) {
+                        while ($query->have_posts()) {
+                            $query->the_post();
+                            $post_id = get_the_ID();
+                           $teacher_link = get_permalink($post_id);
+                        }
+                    
+                        // Restore original post data
+                        wp_reset_postdata();
+                    } else {
+                        // No posts found
+                        continue;
+                    }
                     if (!empty($reviews)) {
                        
                         foreach ($reviews as $review) {
@@ -117,7 +140,7 @@ class Elementor_fiverr_market_teacher_loop extends \Elementor\Widget_Base
                                 (<?php echo $total_review; ?> Reviews)</div>
 
                             <div class="gig-btn">
-                                <a href="<?php echo get_author_posts_url($teacher->ID); ?>">Get Started <i class="fas fa-right-long ms-2"></i></a>
+                                <a href="<?php echo $teacher_link; ?>">Get Started <i class="fas fa-right-long ms-2"></i></a>
                             </div>
                         </div>
                     </div>

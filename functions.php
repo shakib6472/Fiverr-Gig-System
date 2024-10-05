@@ -141,8 +141,8 @@ function create_teacher_student_message_cpt()
         'rewrite' => array('slug' => 'teacher'),
         'capability_type' => 'post',
         'has_archive' => true,
-        'hierarchical' => false,
-        'menu_position' => null,
+        'hierarchical' => true,
+        'menu_position' => 1,
         'supports' => array('title', 'editor', 'author', 'custom-fields', 'thumbnail'),
     );
 
