@@ -2,19 +2,19 @@
 
 function add_new_teacher()
 {
-    // Check nonce for security (if you've set one)
-    // check_ajax_referer('your_nonce_action', 'nonce');
-
-    // Validate and sanitize input
+    // Validate and sanitize input fields
     $first_name = sanitize_text_field($_POST['first_name']);
     $last_name = sanitize_text_field($_POST['last_name']);
     $username = sanitize_user($_POST['username']);
     $email = sanitize_email($_POST['email']);
     $phone_number = sanitize_text_field($_POST['phone_number']);
-    $expertise = sanitize_text_field($_POST['expertise']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
+    // New taxonomy fields
+    $expertise = sanitize_text_field($_POST['expertise']);
+    $region = sanitize_text_field($_POST['region']);
+    $grade = sanitize_text_field($_POST['grade']);
 
     // Check if password and confirm password match
     if ($password !== $confirm_password) {
@@ -29,19 +29,11 @@ function add_new_teacher()
         error_log('message = ' . $user_id->get_error_message());
     }
 
-    // Set additional user meta
-    update_user_meta($user_id, 'first_name', $first_name);
-    update_user_meta($user_id, 'last_name', $last_name);
-    update_user_meta($user_id, 'phone_number', $phone_number);
-    update_user_meta($user_id, 'expertice', $expertise);
-
-
     // Process profile picture upload
     if (isset($_FILES['profile_picture']) && !empty($_FILES['profile_picture']['name'])) {
         $profile_picture = upload_image($_FILES['profile_picture']);
         if ($profile_picture && !is_wp_error($profile_picture)) {
-            error_log('Profile picture updated.');
-            update_user_meta($user_id, 'profile_picture', $profile_picture); // Save the file URL in user meta
+            update_user_meta($user_id, 'profile_picture', $profile_picture);
         } else {
             wp_send_json_error(['message' => 'Profile picture upload failed.']);
         }
@@ -51,8 +43,7 @@ function add_new_teacher()
     if (isset($_FILES['cover_image']) && !empty($_FILES['cover_image']['name'])) {
         $cover_image = upload_image($_FILES['cover_image']);
         if ($cover_image && !is_wp_error($cover_image)) {
-            update_user_meta($user_id, 'cover_image', $cover_image); // Save the file URL in user meta
-            error_log('Cover picture updated.');
+            update_user_meta($user_id, 'cover_image', $cover_image);
         } else {
             wp_send_json_error(['message' => 'Cover image upload failed.']);
         }
@@ -65,40 +56,51 @@ function add_new_teacher()
     // Create a new post of type 'teacher'
     $post_data = [
         'post_title'   => $first_name . ' ' . $last_name,
-        'post_status'  => 'publish',
+        'post_status'  => 'draft',
         'post_type'    => 'teacher',
-        'post_author'  => $user_id // Set the registered user as the author
+        'post_author'  => $user_id
     ];
     $post_id = wp_insert_post($post_data);
 
     if (is_wp_error($post_id)) {
         wp_send_json_error(['message' => 'Teacher post creation failed.']);
-        error_log('Error creating teacher post: ' . $post_id->get_error_message());
-        return; // Stop further execution
+        return;
     }
 
-    // Add the same meta fields to the post
+    // Add the user data as meta fields to the post
     update_post_meta($post_id, 'first_name', $first_name);
     update_post_meta($post_id, 'last_name', $last_name);
     update_post_meta($post_id, 'phone_number', $phone_number);
-    update_post_meta($post_id, 'expertise', $expertise);
+
+    // Assign taxonomy terms to the post (Grade, Region, Expertise)
+    if (!empty($expertise)) {
+        wp_set_post_terms($post_id, $expertise, 'expertise');
+    }
+    if (!empty($region)) {
+        wp_set_post_terms($post_id, $region, 'region');
+    }
+    if (!empty($grade)) {
+        wp_set_post_terms($post_id, $grade, 'grade');
+    }
 
     // Set the profile picture as the post thumbnail (featured image)
     if (isset($profile_picture)) {
-        set_post_thumbnail($post_id, $profile_picture); // Assuming $profile_picture is the attachment ID
+        set_post_thumbnail($post_id, $profile_picture);
     }
 
     // Set the cover image as post meta (if needed for additional display)
     if (isset($cover_image)) {
-        update_post_meta($post_id, 'cover_image', $cover_image); // Add cover image meta to the post
+        update_post_meta($post_id, 'cover_image', $cover_image);
     }
 
     // Send success response
-    wp_send_json_success(['message' => 'User created successfully!']);
+    wp_send_json_success(['message' => 'User and teacher profile created successfully!']);
 }
+
 
 add_action('wp_ajax_add_new_teacher', 'add_new_teacher');
 add_action('wp_ajax_nopriv_add_new_teacher', 'add_new_teacher'); // For non-logged-in users (optional)
+
 
 // Helping function of add new teacher
 function upload_image($file)
@@ -135,7 +137,6 @@ function upload_image($file)
     // If there was an error, return the error message
     return new WP_Error('upload_failed', $upload['error']);
 }
-
 
 /*========================================================
 * Reply to a message

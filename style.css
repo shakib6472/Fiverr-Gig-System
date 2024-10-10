@@ -373,22 +373,21 @@ body .pre-loader {
 
 .gigs {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-column-gap: 25px;
-  grid-row-gap: 25px;
+  grid-template-columns:  repeat(3, 1fr); /* Auto but limits to 3 columns */
+  grid-gap: 25px;
 }
-@media only screen and (max-width: 1080px) {
+
+@media (max-width: 1024px) {
+  /* For tablets (medium screens) */
   .gigs {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-column-gap: 25px;
-    grid-row-gap: 25px;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
   }
 }
+
 @media only screen and (max-width: 800px) {
   .gigs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     grid-column-gap: 25px;
     grid-row-gap: 25px;
   }
@@ -396,7 +395,7 @@ body .pre-loader {
 @media only screen and (max-width: 500px) {
   .gigs {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(1, 1fr);
     grid-column-gap: 25px;
     grid-row-gap: 25px;
   }
@@ -1123,4 +1122,67 @@ body .tutor-dashboard .tutor-dashboard-content .tutor-capitalize-text {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+}
+
+
+/* Left Sidebar */
+
+.container .row .sidebar {
+  border: 2px solid #efefef;
+  padding: 13px;
+  box-shadow: 0px 0px 5px -3px #17a2b8;
+  border-radius: 6px;
+}
+
+.error-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #b83217a4;
+  z-index: 546546554654;
+  display: none;
+}
+.error-popup .card{
+  padding: 30px;
+  justify-content: center;
+  align-items: center;
+}
+.error-popup .card img{
+  max-width: 250px;
+  height: auto;
+}
+.error-popup .card .text{
+  font-size: 21px;
+
+}
+.error-success {
+  position: fixed;
+  top: 0;
+  left: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #16ae2ba4;
+  z-index: 546546554654;
+  /* display: none; */
+}
+.error-success .card{
+  padding: 30px;
+  justify-content: center;
+  align-items: center;
+}
+.error-success .card img{
+  max-width: 250px;
+  height: auto;
+}
+.error-success .card .text{
+  font-size: 21px;
+
 }

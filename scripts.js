@@ -52,8 +52,15 @@ $(document).ready(function () {
           // Handle success response
           $('.pre-loader').css('display', 'none');
           console.log(response);
-          // Reload the window
-          // location.reload();
+          if(response.success) {
+            $('.error-success').css('display', 'flex');
+            console.log('redirecting');
+          } else {
+            $('.error-popup .text').text(response.data.message);
+            $('.error-popup').css('display', 'flex');
+            
+          }
+
         },
         error: function (xhr, textStatus, errorThrown) {
           // Handle error
@@ -126,7 +133,7 @@ $(document).ready(function () {
   setInterval(function () {
     // Create an invisible audio element and append it to the body
     // Get the audio element by its ID
-    
+
     $.ajax({
       type: "POST",
       url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
@@ -141,7 +148,7 @@ $(document).ready(function () {
           // Reload the window
           //need to play an audio here. Audio is in the same folder of this js file. audio file name is m.mp3
           // Create an audio element and set its source
-          
+
           const audio = $("#audiomsgesound")[0];
           // Play the audio when desired
           audio.play().catch(function (error) {
@@ -194,49 +201,55 @@ $(document).ready(function () {
     let isValid = true; // Flag to track if all fields are filled
 
     formData.forEach((value, key) => {
-        if (!value) { // If value is empty or null
-            alert(key + " is required. Please fill this field.");
-            isValid = false;
-            return false; // Stop the loop once an empty field is found
-        }
+      if (!value) { // If value is empty or null
+        alert(key + " is required. Please fill this field.");
+        isValid = false;
+        return false; // Stop the loop once an empty field is found
+      }
     });
 
     if (isValid) {
-        $(".pre-loading").css("display", "flex"); // Show pre-loading
-        $('.chat-popup').css('display', 'none');  // Hide the chat popup
+      $(".pre-loading").css("display", "flex"); // Show pre-loading
+      $('.chat-popup').css('display', 'none');  // Hide the chat popup
 
-        // Perform AJAX request
-        $.ajax({
-            type: "POST",
-            url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
-            data: formData,
-            processData: false,   // Prevent jQuery from processing the data
-            contentType: false,   // Set content type to false to send FormData correctly
-            success: function (response) {
-                console.log(response);  // Handle successful response
-                if (response.success) {
-                  // Optionally, reload or perform any action after success
-                  // location.reload(); 
-                  console.log("Invitation sent successfully.");
-                } else {
-                  console.log(response);  // Handle successful response
-                    alert("Failed to send invitation.");
-                }
-                $(".pre-loading").css("display", "none"); // Hide pre-loading after success or failure
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                console.error("AJAX Error:", textStatus, errorThrown);
-                $(".pre-loading").css("display", "none"); // Hide pre-loading on error
-            }
-        });
+      // Perform AJAX request
+      $.ajax({
+        type: "POST",
+        url: ajax_object.ajax_url, // WordPress AJAX URL provided via wp_localize_script
+        data: formData,
+        processData: false,   // Prevent jQuery from processing the data
+        contentType: false,   // Set content type to false to send FormData correctly
+        success: function (response) {
+          console.log(response);  // Handle successful response
+          if (response.success) {
+            // Optionally, reload or perform any action after success
+            // location.reload(); 
+            console.log("Invitation sent successfully.");
+          } else {
+            console.log(response);  // Handle successful response
+            alert("Failed to send invitation.");
+          }
+          $(".pre-loading").css("display", "none"); // Hide pre-loading after success or failure
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          console.error("AJAX Error:", textStatus, errorThrown);
+          $(".pre-loading").css("display", "none"); // Hide pre-loading on error
+        }
+      });
     }
+  });
+
+
+  $('.filter-select').on('change', function () {
+    // Trigger the form submission to refresh the page with new parameters
+    $('#filterForm').submit();
+  });
+
+  console.log('initiate Closed 2.1');
+
+$('.error-popup').click(function (e) { 
+  e.preventDefault();
+  $(this).hide();
 });
-
-
-
-
-
-  console.log('initiate 2.1');
-
 
 });
