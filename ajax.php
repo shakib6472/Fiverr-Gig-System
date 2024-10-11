@@ -97,9 +97,66 @@ function add_new_teacher()
     wp_send_json_success(['message' => 'User and teacher profile created successfully!']);
 }
 
-
 add_action('wp_ajax_add_new_teacher', 'add_new_teacher');
 add_action('wp_ajax_nopriv_add_new_teacher', 'add_new_teacher'); // For non-logged-in users (optional)
+
+function register_student() {
+    // Check for required fields
+    if ( empty($_POST['first_name']) || empty($_POST['last_name']) || empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password']) ) {
+        wp_send_json_error(['message' => 'Required fields are missing']);
+        return;
+    }
+
+    $first_name = sanitize_text_field($_POST['first_name']);
+    $last_name  = sanitize_text_field($_POST['last_name']);
+    $username   = sanitize_text_field($_POST['username']);
+    $email      = sanitize_email($_POST['email']);
+    $password   = $_POST['password'];
+    $parent_email = isset($_POST['parent_email']) ? sanitize_email($_POST['parent_email']) : '';
+
+    // Ensure username and email are not already taken
+    if ( username_exists( $username ) || email_exists( $email ) ) {
+        wp_send_json_error(['message' => 'Username or email already exists.']);
+        return;
+    }
+
+    // Create the user
+    $user_id = wp_create_user( $username, $password, $email );
+
+    if ( is_wp_error($user_id) ) {
+        wp_send_json_error(['message' => $user_id->get_error_message()]);
+        return;
+    }
+
+    // Set user role as subscriber (default)
+    wp_update_user([
+        'ID' => $user_id,
+        'first_name' => $first_name,
+        'last_name' => $last_name,
+    ]);
+
+    // Set additional user meta if needed (e.g., parent email)
+    if (!empty($parent_email)) {
+        update_user_meta( $user_id, 'parent_email', $parent_email );
+    }
+
+    // Assign the user the "subscriber" role
+    $user = new WP_User( $user_id );
+    $user->set_role( 'subscriber' );
+
+    // Log the user in
+    wp_set_current_user( $user_id );
+    wp_set_auth_cookie( $user_id, true ); // Auto-login the user
+
+    // Get the dashboard URL (you can customize this based on user role)
+    $dashboard_url = home_url('/dashboard'); // Redirect to the dashboard (you can customize this)
+
+    // Return success response with the dashboard URL
+    wp_send_json_success(['dashboard_url' => $dashboard_url]);
+}
+
+add_action('wp_ajax_nopriv_register_student', 'register_student');
+add_action('wp_ajax_register_student', 'register_student');
 
 
 // Helping function of add new teacher

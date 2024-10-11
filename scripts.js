@@ -1,10 +1,79 @@
 
 $(document).ready(function () {
   console.log('initiate 1.1');
-
+  console.log(typeof jQuery);
   if ($('.chat-messages').length) {
     $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
   }
+
+  $('#age').change(function (e) {
+    e.preventDefault();
+    console.log('on change');
+    const ageInput = $("#age").val();
+    const parentEmailGroup = $("#parent-email-group");
+
+    if (ageInput < 18) {
+      parentEmailGroup.show();
+      $("#parentEmail").prop('required', true); // Make parent email required if shown
+    } else {
+      parentEmailGroup.hide();
+      $("#parentEmail").prop('required', false); // Remove required if hidden
+    }
+
+  });
+
+
+  $("#sregistration_form").on("submit", function (event) {
+    var form = $(this)[0];
+
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+      $('.pre-loader').css('display', 'none');
+    } else {
+      $('.pre-loader').css('display', 'flex');
+      event.preventDefault();
+
+      var formData = new FormData();
+      formData.append('action', 'register_student');  // Matching the action and function name
+      formData.append('first_name', $("#firstName").val());
+      formData.append('last_name', $("#lastName").val());
+      formData.append('username', $("#username").val());
+      formData.append('email', $("#email").val());
+      formData.append('phone_number', $("#phone").val());
+      formData.append('gender', $("#gender").val());
+      formData.append('age', $("#age").val());
+      formData.append('password', $("#password").val());
+      formData.append('confirm_password', $("#confirmPassword").val());
+      formData.append('parent_email', $("#parentEmail").val()); // Parent email if applicable
+
+      $.ajax({
+        type: 'POST',
+        url: ajax_object.ajax_url,  // WordPress AJAX URL provided via wp_localize_script
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function (response) {
+          $('.pre-loader').css('display', 'none');
+          if (response.success) {
+            window.location.href = response.data.dashboard_url;  // Redirect to dashboard
+          } else {
+            $('.error-popup .text').text(response.data.message);
+            $('.error-popup').css('display', 'flex');
+          }
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          $('.pre-loader').css('display', 'none');
+          console.error('Error:', errorThrown);
+        }
+      });
+    }
+
+    form.classList.add("was-validated");
+  });
+
+
 
   // Custom validation with jQuery
   $("#registration_form").on("submit", function (event) {
@@ -52,13 +121,13 @@ $(document).ready(function () {
           // Handle success response
           $('.pre-loader').css('display', 'none');
           console.log(response);
-          if(response.success) {
+          if (response.success) {
             $('.error-success').css('display', 'flex');
             console.log('redirecting');
           } else {
             $('.error-popup .text').text(response.data.message);
             $('.error-popup').css('display', 'flex');
-            
+
           }
 
         },
@@ -245,11 +314,11 @@ $(document).ready(function () {
     $('#filterForm').submit();
   });
 
-  console.log('initiate Closed 2.1');
 
-$('.error-popup').click(function (e) { 
-  e.preventDefault();
-  $(this).hide();
-});
+  $('.error-popup').click(function (e) {
+    e.preventDefault();
+    $(this).hide();
+  });
 
+  console.log('initiate Closed 2.2');
 });

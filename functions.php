@@ -55,7 +55,7 @@ function register_teacher_taxonomies(){
                 'singular_name' => 'Expertise',
             ),
             'public' => true,
-            'hierarchical' => false, // Like tags
+            'hierarchical' => true, // Like tags
             'show_ui' => true,
             'show_in_menu' => true,
             'show_in_rest' => true,
@@ -67,53 +67,72 @@ function register_teacher_taxonomies(){
 add_action('init', 'register_teacher_taxonomies', 0);
 
 // Add Review Function
-function add_review($teacher_id, $review_data)
-{
-    // Get existing reviews
-    $reviews = get_user_meta($teacher_id, 'teacher_reviews', true);
-    $reviews = $reviews ? json_decode($reviews, true) : [];
-
-    // Add new review
-    $reviews[] = $review_data;
-
-    // Update user meta with new reviews
-    update_user_meta($teacher_id, 'teacher_reviews', json_encode($reviews));
-}
-// // Example usage
-// $teacher_id = 1; // Replace with the actual teacher ID
-// $review_data = [
-//     'reviewer_name' => 'John Doe',
-//     'rating' => 5,
-//     'comment' => 'Great teacher!',
-//     'date' => current_time('mysql')
-// ];
-// add_review($teacher_id, $review_data);
 
 
-// Hook into init action to add reviews
+// Hook into init action to add reviews for teacher post type
 // add_action('init', 'add_reviews_example');
-
 function add_reviews_example()
 {
-    // Replace with the actual teacher ID
-    $teacher_id = 6;
+    // Replace with the actual teacher post ID
+    $teacher_post_id = 18733;
 
     // Review data
     $review_data = [
-        'reviewer_name' => 'ALim',
-        'rating' => 3,
-        'comment' => 'Great teacher! Thanks for the colaboration',
+        'reviewer_name' => 'Shakib',
+        'rating' => 5,
+        'comment' => 'Great teacher! Thanks for the collaboration',
         'date' => current_time('mysql'),
         'image' => 'https://cdn-icons-png.flaticon.com/512/2919/2919906.png'
     ];
 
-    // Make sure the user exists before adding a review
-    if (get_user_by('id', $teacher_id)) {
-        add_review($teacher_id, $review_data);
+    // Make sure the teacher post exists before adding a review
+    if (get_post($teacher_post_id) && get_post_type($teacher_post_id) == 'teacher') {
+        add_review_to_teacher($teacher_post_id, $review_data);
+
     } else {
-        error_log("User with ID $teacher_id does not exist.");
+        error_log("Teacher post with ID $teacher_post_id does not exist.");
     }
 }
+
+// Function to add a review to a teacher post and update the average rating
+function add_review_to_teacher($teacher_post_id, $review_data)
+{
+    // Get existing reviews from the teacher post
+    $existing_reviews = get_post_meta($teacher_post_id, 'teacher_reviews', true);
+    $existing_reviews = $existing_reviews ? json_decode($existing_reviews, true) : [];
+
+    // Add the new review to the existing reviews
+    $existing_reviews[] = $review_data;
+
+    // Update the post meta with the new reviews
+    update_post_meta($teacher_post_id, 'teacher_reviews', json_encode($existing_reviews));
+
+    // Calculate the new average rating
+    calculate_and_update_average_rating($teacher_post_id, $existing_reviews);
+}
+
+// Function to calculate and update the average rating
+function calculate_and_update_average_rating($teacher_post_id, $reviews)
+{
+    $total_rating = 0;
+    $total_reviews = count($reviews);
+
+    // Sum up all ratings
+    foreach ($reviews as $review) {
+        $total_rating += $review['rating'];
+    }
+
+    // Calculate the average rating
+    $average_rating = ($total_reviews > 0) ? $total_rating / $total_reviews : 0;
+
+    // Update the average rating in the post meta
+    update_post_meta($teacher_post_id, 'average_rating', $average_rating);
+
+    error_log("Updated average rating for teacher post ID $teacher_post_id to $average_rating.");
+}
+
+
+
 function create_teacher_student_message_cpt()
 {
     // Labels for Messages Post Type
@@ -849,15 +868,48 @@ function chat_url()
 add_shortcode('chat_url', 'chat_url');
 
 
-
+// delete_option('grades_and_expertise_added');
 function add_grades_and_expertise() {
     // American and British Grades
+    $expertise = array(
+        // American Curriculum
+        'SAT', 'ACT',
+        'AP Calc AB', 'AP Calc BC', 'AP Stats',
+        'AP Physics 1', 'AP Physics 2', 'AP Physics C (Mech)', 'AP Physics C (E&M)',
+        'AP Bio', 'AP Chem', 'AP Env Science',
+        'AP Eng Lang', 'AP Eng Lit',
+        'AP World Hist', 'AP US Hist', 'AP Euro Hist', 'AP Human Geo', 'AP Psych',
+        'AP Gov (US)', 'AP Gov (Comparative)',
+        'AP Spanish', 'AP French', 'AP Chinese', 'AP German',
+        'AP Art & Design', 'AP Music Theory', 'PSAT',
+
+        // British Curriculum (IGCSE/GCSE and A Levels)
+        'IGCSE Math', 'IGCSE English', 'IGCSE Bio', 'IGCSE Chem', 'IGCSE Physics',
+        'IGCSE History', 'IGCSE Geography', 'IGCSE Econ', 'IGCSE Sociology',
+        'IGCSE Arabic', 'IGCSE French', 'IGCSE Spanish', 'IGCSE Art & Design', 'IGCSE Drama', 'IGCSE Music',
+        'IGCSE Business', 'IGCSE Comp Sci', 'IGCSE ICT', 'IGCSE PE', 'IGCSE Global Perspectives',
+        'A-Level Math', 'A-Level Further Math', 'A-Level Bio', 'A-Level Chem', 'A-Level Physics',
+        'A-Level History', 'A-Level Geography', 'A-Level Econ', 'A-Level Sociology', 'A-Level Psych',
+        'A-Level Arabic', 'A-Level French', 'A-Level Spanish',
+        'A-Level Art & Design', 'A-Level Drama', 'A-Level Music',
+        'A-Level Business', 'A-Level Comp Sci', 'A-Level ICT', 'A-Level PE', 'A-Level Global Perspectives',
+
+        // Saudi National Curriculum
+        'Qiyas Verbal', 'Qiyas Quantitative', 'Tahsili Math', 'Tahsili Physics', 'Tahsili Chem', 'Tahsili Bio',
+
+        // International Baccalaureate (IB) Curriculum
+        'IB Math (SL/HL)', 'IB Bio (SL/HL)', 'IB Chem (SL/HL)', 'IB Physics (SL/HL)',
+        'IB Econ (SL/HL)', 'IB Business (SL/HL)', 'IB Eng Lit (SL/HL)',
+        'IB Arabic (SL/HL)', 'IB History (SL/HL)', 'IB Psych (SL/HL)'
+    );
+
     $grades = array(
         // American system
         'Primary School', 'Middle School', 'High School', 'Undergraduate', 'Postgraduate', 'Diploma', 'Doctorate',
         // British system
         'Key Stage 1', 'Key Stage 2', 'Key Stage 3', 'Key Stage 4', 'GCSE', 'A-Level'
     );
+
 
     foreach ($grades as $grade) {
         if (!term_exists($grade, 'grade')) {
@@ -867,10 +919,37 @@ function add_grades_and_expertise() {
 
     // Expertise (Curriculums) including American and British systems
     $expertise = array(
-        // American curriculums
-        'SAT', 'ACT', 'AP', 'IB', 'Math', 'Science', 'English', 'Computer Science',
-        // British curriculums
-        'British National Curriculum', 'Cambridge International', 'Edexcel', 'IGCSE', 'BTEC', 'A-Level'
+        // American Curriculum
+        'SAT', 'ACT',
+        'AP Calc AB', 'AP Calc BC', 'AP Stats',
+        'AP Physics 1', 'AP Physics 2', 'AP Physics C (Mech)', 'AP Physics C (E&M)',
+        'AP Bio', 'AP Chem', 'AP Env Science',
+        'AP Eng Lang', 'AP Eng Lit',
+        'AP World Hist', 'AP US Hist', 'AP Euro Hist', 'AP Human Geo', 'AP Psych',
+        'AP Gov (US)', 'AP Gov (Comparative)',
+        'AP Spanish', 'AP French', 'AP Chinese', 'AP German',
+        'AP Art & Design', 'AP Music Theory', 'PSAT',
+
+        // British Curriculum (IGCSE/GCSE and A Levels)
+        'IGCSE Math', 'IGCSE English', 'IGCSE Bio', 'IGCSE Chem', 'IGCSE Physics',
+        'IGCSE History', 'IGCSE Geography', 'IGCSE Econ', 'IGCSE Sociology',
+        'IGCSE Arabic', 'IGCSE French', 'IGCSE Spanish', 'IGCSE Art & Design', 'IGCSE Drama', 'IGCSE Music',
+        'IGCSE Business', 'IGCSE Comp Sci', 'IGCSE ICT', 'IGCSE PE', 'IGCSE Global Perspectives',
+        'A-Level Math', 'A-Level Further Math', 'A-Level Bio', 'A-Level Chem', 'A-Level Physics',
+        'A-Level History', 'A-Level Geography', 'A-Level Econ', 'A-Level Sociology', 'A-Level Psych',
+        'A-Level Arabic', 'A-Level French', 'A-Level Spanish',
+        'A-Level Art & Design', 'A-Level Drama', 'A-Level Music',
+        'A-Level Business', 'A-Level Comp Sci', 'A-Level ICT', 'A-Level PE', 'A-Level Global Perspectives',
+
+        // Saudi National Curriculum
+        'Qiyas Verbal', 'Qiyas Quantitative', 'Tahsili Math', 'Tahsili Physics', 'Tahsili Chem', 'Tahsili Bio',
+
+        // International Baccalaureate (IB) Curriculum
+        'IB Math (SL/HL)', 'IB Bio (SL/HL)', 'IB Chem (SL/HL)', 'IB Physics (SL/HL)',
+        'IB Econ (SL/HL)', 'IB Business (SL/HL)', 'IB Eng Lit (SL/HL)',
+        'IB Arabic (SL/HL)', 'IB History (SL/HL)', 'IB Psych (SL/HL)'
+    
+
     );
 
     foreach ($expertise as $curriculum) {

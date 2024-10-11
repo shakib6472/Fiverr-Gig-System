@@ -72,13 +72,13 @@ class Elementor_fiverr_market_teacher_registration_form extends \Elementor\Widge
                             <div class="invalid-feedback">Please provide a valid last name.</div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="uusername">Username</label>
                             <input type="text" class="form-control" id="uusername" placeholder="Username" required />
                             <div class="invalid-feedback">Please choose a username.</div>
                         </div>
+                        
                         <div class="col-md-6 mb-3">
                             <label for="email">Email</label>
                             <input type="email" class="form-control" id="email" placeholder="Email" required />
@@ -177,7 +177,7 @@ class Elementor_fiverr_market_teacher_registration_form extends \Elementor\Widge
                             <div class="invalid-feedback">You must agree before submitting.</div>
                         </div>
                     </div>
-                    <button class="btn btn-primary mt-3 w-100 button-style" type="submit">Submit form</button>
+                    <button class="btn btn-primary mt-3 w-100 button-style" type="submit">Resgister Teacher</button>
                 </form>
 
             </div>

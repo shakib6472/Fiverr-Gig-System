@@ -3,7 +3,7 @@
 	* Plugin Name: Fiverr Market
 	* Plugin URI: https://github.com/shakib6472/
 	* Description: This plugin is to create a Fiverr marketplace type of gig creation. Each teacher will be a gig and student can book His schedule. Teacher will be paid Hourly.
-	* Version: 1.0.0
+	* Version: 1.1.1
 	* Requires at least: 5.2
 	* Requires PHP: 7.2
 	* Author: Shakib Shown
@@ -17,7 +17,7 @@
 	if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
 	}
-
+	require_once 'vendor/autoload.php';
 	require_once(__DIR__.'/d-tag.php');
 	require_once(__DIR__.'/ajax.php');
 	require_once(__DIR__.'/functions.php');
@@ -47,10 +47,12 @@
 {
 
 	require_once(__DIR__ . '/elementor/regi.php');
+	require_once(__DIR__ . '/elementor/s-regi.php');
 	require_once(__DIR__ . '/elementor/teachers.php');
 
 	$widgets_manager->register(new \Elementor_fiverr_market_teacher_loop());
 	$widgets_manager->register(new \Elementor_fiverr_market_teacher_registration_form());
+	$widgets_manager->register(new \Elementor_fiverr_market_student_registration_form());
 }
 add_action('elementor/widgets/register', 'fiverr_market_elemetore_widgets');
 
