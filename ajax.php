@@ -1,5 +1,37 @@
 <?php
 
+
+
+add_action('wp_ajax_update_payment_status', 'update_payment_status');
+add_action('wp_ajax_nopriv_update_payment_status', 'update_payment_status');
+
+function update_payment_status() {
+    // Capture the PayPal Order ID, amount, and other data from the AJAX request
+    $payment_id = sanitize_text_field($_POST['payment_id']);
+    $amount = sanitize_text_field($_POST['amount']);
+    $all_data = $_POST['all']; // All the data from PayPal
+    $actions = $_POST['actions']; // PayPal actions data
+
+    // Log the captured data to WordPress debug.log
+    error_log("PayPal Payment ID: " . $payment_id);
+    error_log("Payment Amount: " . $amount);
+    error_log("All Data from PayPal: " . print_r(json_decode(stripslashes($all_data), true), true)); // Logs all data from PayPal
+    error_log("Actions Data from PayPal: " . print_r(json_decode(stripslashes($actions), true), true)); // Logs actions data
+
+    // Respond with a success message
+    wp_send_json_success('Payment data logged successfully.');
+
+    wp_die(); // Always call this at the end of WordPress AJAX functions
+}
+
+
+
+
+
+
+
+
+
 function add_new_teacher()
 {
     // Validate and sanitize input fields

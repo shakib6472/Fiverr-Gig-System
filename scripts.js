@@ -6,22 +6,6 @@ $(document).ready(function () {
     $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
   }
 
-  $('#age').change(function (e) {
-    e.preventDefault();
-    console.log('on change');
-    const ageInput = $("#age").val();
-    const parentEmailGroup = $("#parent-email-group");
-
-    if (ageInput < 18) {
-      parentEmailGroup.show();
-      $("#parentEmail").prop('required', true); // Make parent email required if shown
-    } else {
-      parentEmailGroup.hide();
-      $("#parentEmail").prop('required', false); // Remove required if hidden
-    }
-
-  });
-
 
   $("#sregistration_form").on("submit", function (event) {
     var form = $(this)[0];
@@ -320,5 +304,57 @@ $(document).ready(function () {
     $(this).hide();
   });
 
-  console.log('initiate Closed 2.2');
+
+  $('.accept-btn').on('click', function() {
+    var amount = $('.custom-price').text().trim(); // Get the amount from .custom-price
+    console.log('Accepting');
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+          return actions.order.create({
+              purchase_units: [{
+                  amount: {
+                      value: $('.custom-price').text().trim()  // Use the amount from your page
+                  }
+              }]
+          });
+      },
+      onApprove: function(data, actions) {
+          // Capture the order after the customer approves the payment
+          return actions.order.capture().then(function(details) {
+              console.log('Transaction completed by ' + details.payer.name.given_name);
+  
+              // Proceed with your AJAX call to WordPress
+              $.ajax({
+                  url: ajax_object.ajax_url, // Use WordPress AJAX URL
+                  type: 'POST',
+                  data: {
+                      action: 'update_payment_status', // The WordPress action hook for the backend
+                      payment_id: data.orderID,  // Send PayPal Order ID
+                      amount: $('.custom-price').text().trim(),  // Send the amount dynamically
+                      all: JSON.stringify(data),  // Send all PayPal data
+                      actions: JSON.stringify(actions),  // Send PayPal actions data
+                  },
+                  success: function(response) {
+                      console.log('Payment updated in database:', response);
+                      alert('Payment completed successfully!');
+                  },
+                  error: function(error) {
+                      console.error('Error updating payment:', error);
+                      alert('Error processing payment.');
+                  }
+              });
+          });
+      },
+      onError: function(err) {
+          console.error('Error during PayPal transaction:', err);
+          alert('There was an error processing the payment. Please try again.');
+      }
+  }).render('.paypal-button-container');
+  
+});
+
+
+
+
+  console.log('initiate Closed 2.3');
 });

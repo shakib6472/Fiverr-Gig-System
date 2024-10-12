@@ -11,12 +11,35 @@ class ComposerStaticInit40aa654f2e66c20881ae0572fe987a10
         array (
             'Stripe\\' => 7,
         ),
+        'P' => 
+        array (
+            'Psr\\Log\\' => 8,
+            'PayPalHttp\\' => 11,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'Stripe\\' => 
         array (
             0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'PayPalHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paypal/paypalhttp/lib/PayPalHttp',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'PayPal' => 
+            array (
+                0 => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib',
+            ),
         ),
     );
 
@@ -29,6 +52,7 @@ class ComposerStaticInit40aa654f2e66c20881ae0572fe987a10
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit40aa654f2e66c20881ae0572fe987a10::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit40aa654f2e66c20881ae0572fe987a10::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit40aa654f2e66c20881ae0572fe987a10::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit40aa654f2e66c20881ae0572fe987a10::$classMap;
 
         }, null, ClassLoader::class);

@@ -109,7 +109,7 @@ class Elementor_fiverr_market_student_registration_form extends \Elementor\Widge
                             <div class="invalid-feedback">Please provide a valid age.</div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <div id="parent-email-group" style="display: none;">
+                            <div id="parent-email-group">
                                 <label for="parentEmail">Parent Email</label>
                                 <input type="email" class="form-control" id="parentEmail" placeholder="Enter parent email">
                                 <div class="invalid-feedback">Please provide a valid parent email.</div>

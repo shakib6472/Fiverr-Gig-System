@@ -8,7 +8,8 @@ add_role('teacher', 'Teacher', array(
     'upload_files' => true, // Can upload files
 ));
 
-function register_teacher_taxonomies(){
+function register_teacher_taxonomies()
+{
     // Grade Taxonomy
     register_taxonomy(
         'grade',
@@ -66,9 +67,6 @@ function register_teacher_taxonomies(){
 // Hook into the 'init' action to register taxonomies
 add_action('init', 'register_teacher_taxonomies', 0);
 
-// Add Review Function
-
-
 // Hook into init action to add reviews for teacher post type
 // add_action('init', 'add_reviews_example');
 function add_reviews_example()
@@ -88,7 +86,6 @@ function add_reviews_example()
     // Make sure the teacher post exists before adding a review
     if (get_post($teacher_post_id) && get_post_type($teacher_post_id) == 'teacher') {
         add_review_to_teacher($teacher_post_id, $review_data);
-
     } else {
         error_log("Teacher post with ID $teacher_post_id does not exist.");
     }
@@ -234,6 +231,9 @@ function conversation_shortcode()
 ?>
 
     <div class="container">
+        <script src="https://www.paypal.com/sdk/js?client-id=Adu-dXa4Y28gXqJQV5BiKYN6f8LsbmwTVNLltinSkAwl7t-BWxoq-F79LlcCPaaYrqceVHf6qzrR2aZC&currency=USD"></script>
+
+
         <?php
         // Query to get all messages for the user
         $args = array(
@@ -459,6 +459,7 @@ function conversation_shortcode()
                         <!-- Popup -->
 
                         <div class="chat-messages">
+
                             <div class="chat-popup">
                                 <div class="container mt-5">
                                     <div class="row justify-content-center">
@@ -624,7 +625,7 @@ function conversation_shortcode()
                                             <div class="card offer-box mb-3">
                                                 <div class="card-header d-flex justify-content-between align-items-center">
                                                     <span class="offer-title">Invitation</span>
-                                                    <span class="offer-price h5 mb-0">$<?php echo $amount; ?></span>
+                                                    <span class="offer-price h5 mb-0">$ <span class="custom-price"><?php echo $amount; ?></span></span>
                                                 </div>
                                                 <div class="card-body">
                                                     <p class="p-0 m-0"><strong>Teacher:</strong> <?php echo $teacher_name; ?></p>
@@ -753,6 +754,10 @@ function conversation_shortcode()
                         ?>
 
 
+                        <div class="paypal-button-container"></div>
+
+
+
                     </div>
 
                     <!-- Chat Footer -->
@@ -869,45 +874,120 @@ add_shortcode('chat_url', 'chat_url');
 
 
 // delete_option('grades_and_expertise_added');
-function add_grades_and_expertise() {
+function add_grades_and_expertise()
+{
     // American and British Grades
     $expertise = array(
         // American Curriculum
-        'SAT', 'ACT',
-        'AP Calc AB', 'AP Calc BC', 'AP Stats',
-        'AP Physics 1', 'AP Physics 2', 'AP Physics C (Mech)', 'AP Physics C (E&M)',
-        'AP Bio', 'AP Chem', 'AP Env Science',
-        'AP Eng Lang', 'AP Eng Lit',
-        'AP World Hist', 'AP US Hist', 'AP Euro Hist', 'AP Human Geo', 'AP Psych',
-        'AP Gov (US)', 'AP Gov (Comparative)',
-        'AP Spanish', 'AP French', 'AP Chinese', 'AP German',
-        'AP Art & Design', 'AP Music Theory', 'PSAT',
+        'SAT',
+        'ACT',
+        'AP Calc AB',
+        'AP Calc BC',
+        'AP Stats',
+        'AP Physics 1',
+        'AP Physics 2',
+        'AP Physics C (Mech)',
+        'AP Physics C (E&M)',
+        'AP Bio',
+        'AP Chem',
+        'AP Env Science',
+        'AP Eng Lang',
+        'AP Eng Lit',
+        'AP World Hist',
+        'AP US Hist',
+        'AP Euro Hist',
+        'AP Human Geo',
+        'AP Psych',
+        'AP Gov (US)',
+        'AP Gov (Comparative)',
+        'AP Spanish',
+        'AP French',
+        'AP Chinese',
+        'AP German',
+        'AP Art & Design',
+        'AP Music Theory',
+        'PSAT',
 
         // British Curriculum (IGCSE/GCSE and A Levels)
-        'IGCSE Math', 'IGCSE English', 'IGCSE Bio', 'IGCSE Chem', 'IGCSE Physics',
-        'IGCSE History', 'IGCSE Geography', 'IGCSE Econ', 'IGCSE Sociology',
-        'IGCSE Arabic', 'IGCSE French', 'IGCSE Spanish', 'IGCSE Art & Design', 'IGCSE Drama', 'IGCSE Music',
-        'IGCSE Business', 'IGCSE Comp Sci', 'IGCSE ICT', 'IGCSE PE', 'IGCSE Global Perspectives',
-        'A-Level Math', 'A-Level Further Math', 'A-Level Bio', 'A-Level Chem', 'A-Level Physics',
-        'A-Level History', 'A-Level Geography', 'A-Level Econ', 'A-Level Sociology', 'A-Level Psych',
-        'A-Level Arabic', 'A-Level French', 'A-Level Spanish',
-        'A-Level Art & Design', 'A-Level Drama', 'A-Level Music',
-        'A-Level Business', 'A-Level Comp Sci', 'A-Level ICT', 'A-Level PE', 'A-Level Global Perspectives',
+        'IGCSE Math',
+        'IGCSE English',
+        'IGCSE Bio',
+        'IGCSE Chem',
+        'IGCSE Physics',
+        'IGCSE History',
+        'IGCSE Geography',
+        'IGCSE Econ',
+        'IGCSE Sociology',
+        'IGCSE Arabic',
+        'IGCSE French',
+        'IGCSE Spanish',
+        'IGCSE Art & Design',
+        'IGCSE Drama',
+        'IGCSE Music',
+        'IGCSE Business',
+        'IGCSE Comp Sci',
+        'IGCSE ICT',
+        'IGCSE PE',
+        'IGCSE Global Perspectives',
+        'A-Level Math',
+        'A-Level Further Math',
+        'A-Level Bio',
+        'A-Level Chem',
+        'A-Level Physics',
+        'A-Level History',
+        'A-Level Geography',
+        'A-Level Econ',
+        'A-Level Sociology',
+        'A-Level Psych',
+        'A-Level Arabic',
+        'A-Level French',
+        'A-Level Spanish',
+        'A-Level Art & Design',
+        'A-Level Drama',
+        'A-Level Music',
+        'A-Level Business',
+        'A-Level Comp Sci',
+        'A-Level ICT',
+        'A-Level PE',
+        'A-Level Global Perspectives',
 
         // Saudi National Curriculum
-        'Qiyas Verbal', 'Qiyas Quantitative', 'Tahsili Math', 'Tahsili Physics', 'Tahsili Chem', 'Tahsili Bio',
+        'Qiyas Verbal',
+        'Qiyas Quantitative',
+        'Tahsili Math',
+        'Tahsili Physics',
+        'Tahsili Chem',
+        'Tahsili Bio',
 
         // International Baccalaureate (IB) Curriculum
-        'IB Math (SL/HL)', 'IB Bio (SL/HL)', 'IB Chem (SL/HL)', 'IB Physics (SL/HL)',
-        'IB Econ (SL/HL)', 'IB Business (SL/HL)', 'IB Eng Lit (SL/HL)',
-        'IB Arabic (SL/HL)', 'IB History (SL/HL)', 'IB Psych (SL/HL)'
+        'IB Math (SL/HL)',
+        'IB Bio (SL/HL)',
+        'IB Chem (SL/HL)',
+        'IB Physics (SL/HL)',
+        'IB Econ (SL/HL)',
+        'IB Business (SL/HL)',
+        'IB Eng Lit (SL/HL)',
+        'IB Arabic (SL/HL)',
+        'IB History (SL/HL)',
+        'IB Psych (SL/HL)'
     );
 
     $grades = array(
         // American system
-        'Primary School', 'Middle School', 'High School', 'Undergraduate', 'Postgraduate', 'Diploma', 'Doctorate',
+        'Primary School',
+        'Middle School',
+        'High School',
+        'Undergraduate',
+        'Postgraduate',
+        'Diploma',
+        'Doctorate',
         // British system
-        'Key Stage 1', 'Key Stage 2', 'Key Stage 3', 'Key Stage 4', 'GCSE', 'A-Level'
+        'Key Stage 1',
+        'Key Stage 2',
+        'Key Stage 3',
+        'Key Stage 4',
+        'GCSE',
+        'A-Level'
     );
 
 
@@ -920,35 +1000,98 @@ function add_grades_and_expertise() {
     // Expertise (Curriculums) including American and British systems
     $expertise = array(
         // American Curriculum
-        'SAT', 'ACT',
-        'AP Calc AB', 'AP Calc BC', 'AP Stats',
-        'AP Physics 1', 'AP Physics 2', 'AP Physics C (Mech)', 'AP Physics C (E&M)',
-        'AP Bio', 'AP Chem', 'AP Env Science',
-        'AP Eng Lang', 'AP Eng Lit',
-        'AP World Hist', 'AP US Hist', 'AP Euro Hist', 'AP Human Geo', 'AP Psych',
-        'AP Gov (US)', 'AP Gov (Comparative)',
-        'AP Spanish', 'AP French', 'AP Chinese', 'AP German',
-        'AP Art & Design', 'AP Music Theory', 'PSAT',
+        'SAT',
+        'ACT',
+        'AP Calc AB',
+        'AP Calc BC',
+        'AP Stats',
+        'AP Physics 1',
+        'AP Physics 2',
+        'AP Physics C (Mech)',
+        'AP Physics C (E&M)',
+        'AP Bio',
+        'AP Chem',
+        'AP Env Science',
+        'AP Eng Lang',
+        'AP Eng Lit',
+        'AP World Hist',
+        'AP US Hist',
+        'AP Euro Hist',
+        'AP Human Geo',
+        'AP Psych',
+        'AP Gov (US)',
+        'AP Gov (Comparative)',
+        'AP Spanish',
+        'AP French',
+        'AP Chinese',
+        'AP German',
+        'AP Art & Design',
+        'AP Music Theory',
+        'PSAT',
 
         // British Curriculum (IGCSE/GCSE and A Levels)
-        'IGCSE Math', 'IGCSE English', 'IGCSE Bio', 'IGCSE Chem', 'IGCSE Physics',
-        'IGCSE History', 'IGCSE Geography', 'IGCSE Econ', 'IGCSE Sociology',
-        'IGCSE Arabic', 'IGCSE French', 'IGCSE Spanish', 'IGCSE Art & Design', 'IGCSE Drama', 'IGCSE Music',
-        'IGCSE Business', 'IGCSE Comp Sci', 'IGCSE ICT', 'IGCSE PE', 'IGCSE Global Perspectives',
-        'A-Level Math', 'A-Level Further Math', 'A-Level Bio', 'A-Level Chem', 'A-Level Physics',
-        'A-Level History', 'A-Level Geography', 'A-Level Econ', 'A-Level Sociology', 'A-Level Psych',
-        'A-Level Arabic', 'A-Level French', 'A-Level Spanish',
-        'A-Level Art & Design', 'A-Level Drama', 'A-Level Music',
-        'A-Level Business', 'A-Level Comp Sci', 'A-Level ICT', 'A-Level PE', 'A-Level Global Perspectives',
+        'IGCSE Math',
+        'IGCSE English',
+        'IGCSE Bio',
+        'IGCSE Chem',
+        'IGCSE Physics',
+        'IGCSE History',
+        'IGCSE Geography',
+        'IGCSE Econ',
+        'IGCSE Sociology',
+        'IGCSE Arabic',
+        'IGCSE French',
+        'IGCSE Spanish',
+        'IGCSE Art & Design',
+        'IGCSE Drama',
+        'IGCSE Music',
+        'IGCSE Business',
+        'IGCSE Comp Sci',
+        'IGCSE ICT',
+        'IGCSE PE',
+        'IGCSE Global Perspectives',
+        'A-Level Math',
+        'A-Level Further Math',
+        'A-Level Bio',
+        'A-Level Chem',
+        'A-Level Physics',
+        'A-Level History',
+        'A-Level Geography',
+        'A-Level Econ',
+        'A-Level Sociology',
+        'A-Level Psych',
+        'A-Level Arabic',
+        'A-Level French',
+        'A-Level Spanish',
+        'A-Level Art & Design',
+        'A-Level Drama',
+        'A-Level Music',
+        'A-Level Business',
+        'A-Level Comp Sci',
+        'A-Level ICT',
+        'A-Level PE',
+        'A-Level Global Perspectives',
 
         // Saudi National Curriculum
-        'Qiyas Verbal', 'Qiyas Quantitative', 'Tahsili Math', 'Tahsili Physics', 'Tahsili Chem', 'Tahsili Bio',
+        'Qiyas Verbal',
+        'Qiyas Quantitative',
+        'Tahsili Math',
+        'Tahsili Physics',
+        'Tahsili Chem',
+        'Tahsili Bio',
 
         // International Baccalaureate (IB) Curriculum
-        'IB Math (SL/HL)', 'IB Bio (SL/HL)', 'IB Chem (SL/HL)', 'IB Physics (SL/HL)',
-        'IB Econ (SL/HL)', 'IB Business (SL/HL)', 'IB Eng Lit (SL/HL)',
-        'IB Arabic (SL/HL)', 'IB History (SL/HL)', 'IB Psych (SL/HL)'
-    
+        'IB Math (SL/HL)',
+        'IB Bio (SL/HL)',
+        'IB Chem (SL/HL)',
+        'IB Physics (SL/HL)',
+        'IB Econ (SL/HL)',
+        'IB Business (SL/HL)',
+        'IB Eng Lit (SL/HL)',
+        'IB Arabic (SL/HL)',
+        'IB History (SL/HL)',
+        'IB Psych (SL/HL)'
+
 
     );
 
@@ -960,39 +1103,209 @@ function add_grades_and_expertise() {
 }
 // Hook into 'init' action to run the function once
 add_action('init', 'run_once_add_grades_and_expertise');
-function run_once_add_grades_and_expertise() {
+function run_once_add_grades_and_expertise()
+{
     if (!get_option('grades_and_expertise_added')) {
         add_grades_and_expertise();
         update_option('grades_and_expertise_added', true);
     }
 }
-function add_countries_to_region_taxonomy() {
+function add_countries_to_region_taxonomy()
+{
     $countries = array(
-        'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 
-        'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 
-        'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 
-        'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 
-        'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 
-        'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 
-        'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 
-        'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 
-        'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 
-        'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 
-        'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 
-        'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 
-        'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 
-        'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 
-        'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 
-        'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 
-        'Palau', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 
-        'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 
-        'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 
-        'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 
-        'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 
-        'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor-Leste', 'Togo', 'Tonga', 
-        'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 
-        'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 
-        'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+        'Afghanistan',
+        'Albania',
+        'Algeria',
+        'Andorra',
+        'Angola',
+        'Antigua and Barbuda',
+        'Argentina',
+        'Armenia',
+        'Australia',
+        'Austria',
+        'Azerbaijan',
+        'Bahamas',
+        'Bahrain',
+        'Bangladesh',
+        'Barbados',
+        'Belarus',
+        'Belgium',
+        'Belize',
+        'Benin',
+        'Bhutan',
+        'Bolivia',
+        'Bosnia and Herzegovina',
+        'Botswana',
+        'Brazil',
+        'Brunei',
+        'Bulgaria',
+        'Burkina Faso',
+        'Burundi',
+        'Cabo Verde',
+        'Cambodia',
+        'Cameroon',
+        'Canada',
+        'Central African Republic',
+        'Chad',
+        'Chile',
+        'China',
+        'Colombia',
+        'Comoros',
+        'Congo',
+        'Costa Rica',
+        'Croatia',
+        'Cuba',
+        'Cyprus',
+        'Czech Republic',
+        'Denmark',
+        'Djibouti',
+        'Dominica',
+        'Dominican Republic',
+        'Ecuador',
+        'Egypt',
+        'El Salvador',
+        'Equatorial Guinea',
+        'Eritrea',
+        'Estonia',
+        'Eswatini',
+        'Ethiopia',
+        'Fiji',
+        'Finland',
+        'France',
+        'Gabon',
+        'Gambia',
+        'Georgia',
+        'Germany',
+        'Ghana',
+        'Greece',
+        'Grenada',
+        'Guatemala',
+        'Guinea',
+        'Guinea-Bissau',
+        'Guyana',
+        'Haiti',
+        'Honduras',
+        'Hungary',
+        'Iceland',
+        'India',
+        'Indonesia',
+        'Iran',
+        'Iraq',
+        'Ireland',
+        'Israel',
+        'Italy',
+        'Jamaica',
+        'Japan',
+        'Jordan',
+        'Kazakhstan',
+        'Kenya',
+        'Kiribati',
+        'Kuwait',
+        'Kyrgyzstan',
+        'Laos',
+        'Latvia',
+        'Lebanon',
+        'Lesotho',
+        'Liberia',
+        'Libya',
+        'Liechtenstein',
+        'Lithuania',
+        'Luxembourg',
+        'Madagascar',
+        'Malawi',
+        'Malaysia',
+        'Maldives',
+        'Mali',
+        'Malta',
+        'Marshall Islands',
+        'Mauritania',
+        'Mauritius',
+        'Mexico',
+        'Micronesia',
+        'Moldova',
+        'Monaco',
+        'Mongolia',
+        'Montenegro',
+        'Morocco',
+        'Mozambique',
+        'Myanmar',
+        'Namibia',
+        'Nauru',
+        'Nepal',
+        'Netherlands',
+        'New Zealand',
+        'Nicaragua',
+        'Niger',
+        'Nigeria',
+        'North Korea',
+        'North Macedonia',
+        'Norway',
+        'Oman',
+        'Pakistan',
+        'Palau',
+        'Panama',
+        'Papua New Guinea',
+        'Paraguay',
+        'Peru',
+        'Philippines',
+        'Poland',
+        'Portugal',
+        'Qatar',
+        'Romania',
+        'Russia',
+        'Rwanda',
+        'Saint Kitts and Nevis',
+        'Saint Lucia',
+        'Saint Vincent and the Grenadines',
+        'Samoa',
+        'San Marino',
+        'Sao Tome and Principe',
+        'Saudi Arabia',
+        'Senegal',
+        'Serbia',
+        'Seychelles',
+        'Sierra Leone',
+        'Singapore',
+        'Slovakia',
+        'Slovenia',
+        'Solomon Islands',
+        'Somalia',
+        'South Africa',
+        'South Korea',
+        'South Sudan',
+        'Spain',
+        'Sri Lanka',
+        'Sudan',
+        'Suriname',
+        'Sweden',
+        'Switzerland',
+        'Syria',
+        'Taiwan',
+        'Tajikistan',
+        'Tanzania',
+        'Thailand',
+        'Timor-Leste',
+        'Togo',
+        'Tonga',
+        'Trinidad and Tobago',
+        'Tunisia',
+        'Turkey',
+        'Turkmenistan',
+        'Tuvalu',
+        'Uganda',
+        'Ukraine',
+        'United Arab Emirates',
+        'United Kingdom',
+        'United States',
+        'Uruguay',
+        'Uzbekistan',
+        'Vanuatu',
+        'Vatican City',
+        'Venezuela',
+        'Vietnam',
+        'Yemen',
+        'Zambia',
+        'Zimbabwe'
     );
 
     foreach ($countries as $country) {
@@ -1003,10 +1316,10 @@ function add_countries_to_region_taxonomy() {
 }
 // Hook into 'init' action to run the function once
 add_action('init', 'run_once_add_countries');
-function run_once_add_countries() {
+function run_once_add_countries()
+{
     if (!get_option('countries_added_to_region')) {
         add_countries_to_region_taxonomy();
         update_option('countries_added_to_region', true);
     }
 }
-
