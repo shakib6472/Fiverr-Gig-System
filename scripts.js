@@ -79,7 +79,9 @@ $(document).ready(function () {
       formData.append('username', $("#uusername").val());
       formData.append('email', $("#email").val());
       formData.append('phone_number', $("#phone_number").val());
-      formData.append('expertise', $("#expertise").val());
+      formData.append('expertise', JSON.stringify($("#expertise").val()));
+      formData.append('grade', JSON.stringify($("#grade").val()));
+      formData.append('region', $("#region").val());
       formData.append('password', $("#ppassword").val());
       formData.append('confirm_password', $("#confirm_password").val());
       formData.append('terms_conditions', $("#terms_conditions").is(":checked"));
@@ -353,8 +355,18 @@ $(document).ready(function () {
   
 });
 
+$("#expertise").select2({
+  placeholder: "Choose your Subjects",
+  allowClear: true,
+  minimumInputLength: 0 // Start showing suggestions after typing 2 characters
+});
+
+$("#grade").select2({
+  placeholder: "Choose your grades",
+  allowClear: true,
+  minimumInputLength: 0 // Start showing suggestions after typing 2 characters
+});
 
 
-
-  console.log('initiate Closed 2.3');
+  console.log('initiate Closed 2.4');
 });

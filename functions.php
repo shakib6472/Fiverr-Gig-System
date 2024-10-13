@@ -8,65 +8,6 @@ add_role('teacher', 'Teacher', array(
     'upload_files' => true, // Can upload files
 ));
 
-function register_teacher_taxonomies()
-{
-    // Grade Taxonomy
-    register_taxonomy(
-        'grade',
-        'teacher',
-        array(
-            'labels' => array(
-                'name' => 'Grades',
-                'singular_name' => 'Grade',
-            ),
-            'public' => true,
-            'hierarchical' => true, // Like categories
-            'show_ui' => true,
-            'show_in_menu' => true,
-            'show_in_rest' => true, // For Gutenberg editor support
-            'rewrite' => array('slug' => 'grade'),
-        )
-    );
-
-    // Region Taxonomy
-    register_taxonomy(
-        'region',
-        'teacher',
-        array(
-            'labels' => array(
-                'name' => 'Regions',
-                'singular_name' => 'Region',
-            ),
-            'public' => true,
-            'hierarchical' => true, // Like categories
-            'show_ui' => true,
-            'show_in_menu' => true,
-            'show_in_rest' => true,
-            'rewrite' => array('slug' => 'region'),
-        )
-    );
-
-    // Expertise Taxonomy
-    register_taxonomy(
-        'expertise',
-        'teacher',
-        array(
-            'labels' => array(
-                'name' => 'Expertise',
-                'singular_name' => 'Expertise',
-            ),
-            'public' => true,
-            'hierarchical' => true, // Like tags
-            'show_ui' => true,
-            'show_in_menu' => true,
-            'show_in_rest' => true,
-            'rewrite' => array('slug' => 'expertise'),
-        )
-    );
-}
-// Hook into the 'init' action to register taxonomies
-add_action('init', 'register_teacher_taxonomies', 0);
-
 // Hook into init action to add reviews for teacher post type
 // add_action('init', 'add_reviews_example');
 function add_reviews_example()
@@ -219,6 +160,68 @@ function create_teacher_student_message_cpt()
     register_post_type('teacher', $teacher_args);
 }
 add_action('init', 'create_teacher_student_message_cpt');
+
+
+function register_teacher_taxonomies()
+{
+    // Grade Taxonomy
+    register_taxonomy(
+        'grade',
+        'teacher',
+        array(
+            'labels' => array(
+                'name' => 'Grades',
+                'singular_name' => 'Grade',
+            ),
+            'public' => true,
+            'hierarchical' => false, // Like categories
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_rest' => true, // For Gutenberg editor support
+            'rewrite' => array('slug' => 'grade'),
+        )
+    );
+
+    // Region Taxonomy
+    register_taxonomy(
+        'region',
+        'teacher',
+        array(
+            'labels' => array(
+                'name' => 'Regions',
+                'singular_name' => 'Region',
+            ),
+            'public' => true,
+            'hierarchical' => false, // Like categories
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_rest' => true,
+            'rewrite' => array('slug' => 'region'),
+        )
+    );
+
+    // Expertise Taxonomy
+    register_taxonomy(
+        'expertise',
+        'teacher',
+        array(
+            'labels' => array(
+                'name' => 'Expertise',
+                'singular_name' => 'Expertise',
+            ),
+            'public' => true,
+            'hierarchical' => false, // Like tags
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_rest' => true,
+            'rewrite' => array('slug' => 'expertise'),
+        )
+    );
+}
+// Hook into the 'init' action to register taxonomies
+add_action('init', 'register_teacher_taxonomies', 0);
+
+
 
 function conversation_shortcode()
 {
