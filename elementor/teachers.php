@@ -47,7 +47,7 @@ class Elementor_fiverr_market_teacher_loop extends \Elementor\Widget_Base
                                     $grades = get_terms(array('taxonomy' => 'grade', 'hide_empty' => false));
                                     foreach ($grades as $grade) {
                                         $selected = isset($_GET['grade']) && $_GET['grade'] == $grade->slug ? 'selected' : '';
-                                        echo "<option value='{$grade->slug}' {$selected}>{$grade->name} ({$grade->count})</option>";
+                                        echo "<option value='{$grade->slug}' {$selected}>{$grade->name}</option>";
                                     }
                                     ?>
                                 </select>
@@ -62,7 +62,7 @@ class Elementor_fiverr_market_teacher_loop extends \Elementor\Widget_Base
                                     $regions = get_terms(array('taxonomy' => 'region', 'hide_empty' => false));
                                     foreach ($regions as $region) {
                                         $selected = isset($_GET['region']) && $_GET['region'] == $region->slug ? 'selected' : '';
-                                        echo "<option value='{$region->slug}' {$selected}>{$region->name} ({$region->count})</option>";
+                                        echo "<option value='{$region->slug}' {$selected}>{$region->name} </option>";
                                     }
                                     ?>
                                 </select>
@@ -89,7 +89,7 @@ class Elementor_fiverr_market_teacher_loop extends \Elementor\Widget_Base
                                     $expertises = get_terms(array('taxonomy' => 'expertise', 'hide_empty' => false));
                                     foreach ($expertises as $expertise) {
                                         $selected = isset($_GET['expertise']) && $_GET['expertise'] == $expertise->slug ? 'selected' : '';
-                                        echo "<option value='{$expertise->slug}' {$selected}>{$expertise->name} ({$expertise->count})</option>";
+                                        echo "<option value='{$expertise->slug}' {$selected}>{$expertise->name}</option>";
                                     }
                                     ?>
                                 </select>

@@ -56,7 +56,7 @@ class Elementor_fiverr_market_student_registration_form extends \Elementor\Widge
         </div>
 
         <div class="container mt-5">
-            <div class="card p-5">
+            <div class="card fform p-5">
                 <form id="sregistration_form" class="needs-validation" novalidate>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -121,6 +121,7 @@ class Elementor_fiverr_market_student_registration_form extends \Elementor\Widge
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" placeholder="Enter password" required>
                             <div class="invalid-feedback">Please provide a valid password.</div>
+                            <div id="password-strength"></div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="confirmPassword">Confirm Password</label>
@@ -128,13 +129,11 @@ class Elementor_fiverr_market_student_registration_form extends \Elementor\Widge
                             <div class="invalid-feedback">Passwords do not match.</div>
                         </div>
                     </div>
-                    <button class="btn btn-primary mt-3 w-100 button-style" type="submit">Resgister Student</button>
+                    <button class="btn btn-primary mt-3 w-100 button-style" id="sregistration" type="submit">Resgister Student</button>
                 </form>
-
-
             </div>
         </div>
 <?php
+    
     }
 }
-?>

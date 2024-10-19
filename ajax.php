@@ -5,7 +5,8 @@
 add_action('wp_ajax_update_payment_status', 'update_payment_status');
 add_action('wp_ajax_nopriv_update_payment_status', 'update_payment_status');
 
-function update_payment_status() {
+function update_payment_status()
+{
     // Capture the PayPal Order ID, amount, and other data from the AJAX request
     $payment_id = sanitize_text_field($_POST['payment_id']);
     $amount = sanitize_text_field($_POST['amount']);
@@ -24,16 +25,50 @@ function update_payment_status() {
     wp_die(); // Always call this at the end of WordPress AJAX functions
 }
 
+// Handle the AJAX login request
+function ajax_fiverr_market_login()
+{
 
+    // Get the username and password from the AJAX request
+    $username = sanitize_text_field($_POST['username']);
+    $password = sanitize_text_field($_POST['password']);
 
+    error_log('username: '. $username);
+    error_log('password: '. $password);
 
+    // Try to authenticate the user
+    $user = wp_signon(array(
+        'user_login'    => $username,
+        'user_password' => $password,
+        'remember'      => true,
+    ));
 
+    error_log(print_r($user, true));
 
+    if (is_wp_error($user)) {
+        // If authentication fails, send an error message
+        wp_send_json_error(array(
+            'message' => $user->get_error_message(),
+        ));
+    } else {
+        // On success, send a redirect URL (e.g., to the dashboard)
+        wp_send_json_success(array(
+            'redirect_url' => home_url(), // Change to desired URL
+        ));
+    }
+    wp_die(); // Always terminate to avoid 0 output in responses
+}
 
+// Add the AJAX action for both logged-in and non-logged-in users
+add_action('wp_ajax_nopriv_ajax_fiverr_market_login', 'ajax_fiverr_market_login');  // For non-logged-in users
+add_action('wp_ajax_ajax_fiverr_market_login', 'ajax_fiverr_market_login');          // For logged-in users (just in case)
 
 
 function add_new_teacher()
 {
+    // Log the start of the function
+    error_log('Starting add_new_teacher function');
+
     // Validate and sanitize input fields
     $first_name = sanitize_text_field($_POST['first_name']);
     $last_name = sanitize_text_field($_POST['last_name']);
@@ -43,22 +78,41 @@ function add_new_teacher()
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
+    // Log form inputs for debugging
+    error_log('First Name: ' . $first_name);
+    error_log('Last Name: ' . $last_name);
+    error_log('Username: ' . $username);
+    error_log('Email: ' . $email);
+    error_log('Phone Number: ' . $phone_number);
+    error_log('Password and Confirm Password match: ' . ($password === $confirm_password ? 'Yes' : 'No'));
+
     // New taxonomy fields
-    $expertise = sanitize_text_field($_POST['expertise']);
+    $expertise = json_decode(stripslashes($_POST['expertise']), true); // Decode the JSON string into an array
     $region = sanitize_text_field($_POST['region']);
-    $grade = sanitize_text_field($_POST['grade']);
+    $grade = json_decode(stripslashes($_POST['grade']), true); // Assuming grade is also an array (like expertise)
+
+    // Log taxonomy fields for debugging
+    error_log('Expertise: ' . print_r($expertise, true));
+    error_log('Region: ' . $region);
+    error_log('Grade: ' . print_r($grade, true));
 
     // Check if password and confirm password match
     if ($password !== $confirm_password) {
+        error_log('Passwords do not match.');
         wp_send_json_error(['message' => 'Passwords do not match.']);
+        return;
     }
 
     // Create the user
     $user_id = wp_create_user($username, $password, $email);
 
+    // Log user creation status
     if (is_wp_error($user_id)) {
+        error_log('User creation error: ' . $user_id->get_error_message());
         wp_send_json_error(['message' => $user_id->get_error_message()]);
-        error_log('message = ' . $user_id->get_error_message());
+        return;
+    } else {
+        error_log('User created successfully with ID: ' . $user_id);
     }
 
     // Process profile picture upload
@@ -66,8 +120,11 @@ function add_new_teacher()
         $profile_picture = upload_image($_FILES['profile_picture']);
         if ($profile_picture && !is_wp_error($profile_picture)) {
             update_user_meta($user_id, 'profile_picture', $profile_picture);
+            error_log('Profile picture uploaded successfully.');
         } else {
+            error_log('Profile picture upload failed.');
             wp_send_json_error(['message' => 'Profile picture upload failed.']);
+            return;
         }
     }
 
@@ -76,14 +133,18 @@ function add_new_teacher()
         $cover_image = upload_image($_FILES['cover_image']);
         if ($cover_image && !is_wp_error($cover_image)) {
             update_user_meta($user_id, 'cover_image', $cover_image);
+            error_log('Cover image uploaded successfully.');
         } else {
+            error_log('Cover image upload failed.');
             wp_send_json_error(['message' => 'Cover image upload failed.']);
+            return;
         }
     }
 
     // Assign the 'teacher' role to the user
     $user = new WP_User($user_id);
     $user->set_role('teacher');
+    error_log('Teacher role assigned to user.');
 
     // Create a new post of type 'teacher'
     $post_data = [
@@ -94,9 +155,13 @@ function add_new_teacher()
     ];
     $post_id = wp_insert_post($post_data);
 
+    // Log post creation status
     if (is_wp_error($post_id)) {
+        error_log('Teacher post creation failed: ' . $post_id->get_error_message());
         wp_send_json_error(['message' => 'Teacher post creation failed.']);
         return;
+    } else {
+        error_log('Teacher post created successfully with ID: ' . $post_id);
     }
 
     // Add the user data as meta fields to the post
@@ -105,36 +170,49 @@ function add_new_teacher()
     update_post_meta($post_id, 'phone_number', $phone_number);
 
     // Assign taxonomy terms to the post (Grade, Region, Expertise)
-    if (!empty($expertise)) {
-        wp_set_post_terms($post_id, $expertise, 'expertise');
+    // Assign taxonomy terms to the post (Grade, Region, Expertise)
+    if (!empty($expertise) && is_array($expertise)) {
+        $expertise = array_map('sanitize_text_field', $expertise);
+        $result = wp_set_post_terms($post_id, $expertise, 'expertise');
+        error_log('Expertise terms set result: ' . print_r($result, true)); // Log result of setting expertise terms
     }
+
+    if (!empty($grade) && is_array($grade)) {
+        $grade = array_map('sanitize_text_field', $grade);
+        $result = wp_set_post_terms($post_id, $grade, 'grade');
+        error_log('Grade terms set result: ' . print_r($result, true)); // Log result of setting grade terms
+    }
+
     if (!empty($region)) {
-        wp_set_post_terms($post_id, $region, 'region');
-    }
-    if (!empty($grade)) {
-        wp_set_post_terms($post_id, $grade, 'grade');
+        $result = wp_set_post_terms($post_id, $region, 'region');
+        error_log('Region terms set result: ' . print_r($result, true)); // Log result of setting region terms
     }
 
     // Set the profile picture as the post thumbnail (featured image)
     if (isset($profile_picture)) {
         set_post_thumbnail($post_id, $profile_picture);
+        error_log('Profile picture set as featured image.');
     }
 
-    // Set the cover image as post meta (if needed for additional display)
+    // Set the cover image as post meta
     if (isset($cover_image)) {
         update_post_meta($post_id, 'cover_image', $cover_image);
+        error_log('Cover image set as post meta.');
     }
 
     // Send success response
+    error_log('User and teacher profile created successfully.');
     wp_send_json_success(['message' => 'User and teacher profile created successfully!']);
 }
+
 
 add_action('wp_ajax_add_new_teacher', 'add_new_teacher');
 add_action('wp_ajax_nopriv_add_new_teacher', 'add_new_teacher'); // For non-logged-in users (optional)
 
-function register_student() {
+function register_student()
+{
     // Check for required fields
-    if ( empty($_POST['first_name']) || empty($_POST['last_name']) || empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password']) ) {
+    if (empty($_POST['first_name']) || empty($_POST['last_name']) || empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password'])) {
         wp_send_json_error(['message' => 'Required fields are missing']);
         return;
     }
@@ -147,15 +225,15 @@ function register_student() {
     $parent_email = isset($_POST['parent_email']) ? sanitize_email($_POST['parent_email']) : '';
 
     // Ensure username and email are not already taken
-    if ( username_exists( $username ) || email_exists( $email ) ) {
+    if (username_exists($username) || email_exists($email)) {
         wp_send_json_error(['message' => 'Username or email already exists.']);
         return;
     }
 
     // Create the user
-    $user_id = wp_create_user( $username, $password, $email );
+    $user_id = wp_create_user($username, $password, $email);
 
-    if ( is_wp_error($user_id) ) {
+    if (is_wp_error($user_id)) {
         wp_send_json_error(['message' => $user_id->get_error_message()]);
         return;
     }
@@ -169,16 +247,16 @@ function register_student() {
 
     // Set additional user meta if needed (e.g., parent email)
     if (!empty($parent_email)) {
-        update_user_meta( $user_id, 'parent_email', $parent_email );
+        update_user_meta($user_id, 'parent_email', $parent_email);
     }
 
     // Assign the user the "subscriber" role
-    $user = new WP_User( $user_id );
-    $user->set_role( 'subscriber' );
+    $user = new WP_User($user_id);
+    $user->set_role('subscriber');
 
     // Log the user in
-    wp_set_current_user( $user_id );
-    wp_set_auth_cookie( $user_id, true ); // Auto-login the user
+    wp_set_current_user($user_id);
+    wp_set_auth_cookie($user_id, true); // Auto-login the user
 
     // Get the dashboard URL (you can customize this based on user role)
     $dashboard_url = home_url('/dashboard'); // Redirect to the dashboard (you can customize this)
@@ -268,7 +346,7 @@ add_action('wp_ajax_nopriv_send_reply_message', 'send_reply_message');
 function invitation_send_to_teacher()
 {
     // Check if the user is logged in
-    if ( ! is_user_logged_in() ) {
+    if (! is_user_logged_in()) {
         wp_send_json_error('You must be logged in to send invitations.');
         return;
     }
@@ -366,12 +444,12 @@ function get_unread_message_notification()
 
             wp_send_json([
                 'success' => true,
-                'm' => 'You have a new message from <strong><a href="' . home_url('/chat?r='.$id) . '">' . $display_name . '</a></strong>'
+                'm' => 'You have a new message from <strong><a href="' . home_url('/chat?r=' . $id) . '">' . $display_name . '</a></strong>'
             ]);
         } else {
             wp_send_json([
                 'success' => true,
-                'm' => 'You have ' . $total . 'New Messages <a href="' . home_url('/chat?r='.$id) . '"> Chat </a>'
+                'm' => 'You have ' . $total . 'New Messages <a href="' . home_url('/chat?r=' . $id) . '"> Chat </a>'
             ]);
         }
     } else {
@@ -380,4 +458,3 @@ function get_unread_message_notification()
 }
 add_action('wp_ajax_get_unread_message_notification', 'get_unread_message_notification');
 add_action('wp_ajax_nopriv_get_unread_message_notification', 'get_unread_message_notification');
-
