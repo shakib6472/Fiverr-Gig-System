@@ -69,7 +69,7 @@ class Elementor_fiverr_market_student_registration_form extends \Elementor\Widge
                             <input type="text" class="form-control" id="lastName" placeholder="Enter last name" required>
                             <div class="invalid-feedback">Please provide a valid last name.</div>
                         </div>
-                    </div>
+                    </div> 
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
